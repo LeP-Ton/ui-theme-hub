@@ -1,0 +1,67 @@
+{
+  "name": "game-theme",
+  "version": "1.0.0",
+  "description": "游戏UI主题，暗色沉浸，适合游戏界面和数据监控",
+  "author": "设计团队A",
+  "scene": "game",
+  "tags": ["game", "hud", "dark", "monitoring"],
+  "requires": [
+    { "name": "poem", "source": "https://github.com/LeP-Ton/poem.git" }
+  ],
+  "preview": ["examples/game-hud.png"],
+  "repository": "https://github.com/example/ui-theme-hub",
+  "license": "MIT",
+  "tokens": {
+    "color": {
+      "primary": "#177ddc",
+      "secondary": "#531dab",
+      "accent": "#13c2c2",
+      "success": "#49aa19",
+      "warning": "#d89614",
+      "error": "#d9363e",
+      "info": "#177ddc",
+      "background": { "base": "#141414", "elevated": "#1f1f1f", "muted": "#000000" },
+      "text": { "primary": "rgba(255, 255, 255, 0.85)", "secondary": "rgba(255, 255, 255, 0.65)", "muted": "rgba(255, 255, 255, 0.45)", "inverse": "rgba(0, 0, 0, 0.88)" },
+      "border": { "default": "#434343", "muted": "#303030" },
+      "extended": {
+        "rarityCommon": "#ffffff",
+        "rarityUncommon": "#1eff00",
+        "rarityRare": "#0070ff",
+        "rarityEpic": "#a335ee",
+        "rarityLegendary": "#ff8000",
+        "healthBar": "#ff4d4f",
+        "manaBar": "#1677ff",
+        "xpBar": "#d89614"
+      }
+    },
+    "spacing": {
+      "unit": 4,
+      "scale": [0, 4, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80, 96],
+      "extended": {
+        "hudTopHeight": 48,
+        "hudBottomHeight": 56,
+        "sidePanelWidth": 280,
+        "skillSlotSize": 56,
+        "skillSlotGap": 4,
+        "inventoryGridSize": 64,
+        "inventoryGridGap": 4,
+        "healthBarHeight": 12,
+        "manaBarHeight": 8
+      }
+    },
+    "typography": {
+      "fontFamily": { "base": "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif", "heading": "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif", "code": "'SF Mono', 'Fira Code', monospace" },
+      "fontSize": { "xs": 12, "sm": 13, "base": 14, "lg": 16, "xl": 20, "2xl": 24, "3xl": 30, "4xl": 36 },
+      "fontWeight": { "normal": 400, "medium": 500, "semibold": 600, "bold": 700 },
+      "lineHeight": { "tight": 1.25, "base": 1.5, "relaxed": 1.75 }
+    },
+    "border": { "radius": { "none": 0, "sm": 4, "base": 6, "lg": 8, "xl": 12, "full": 9999 }, "width": { "thin": 1, "base": 1, "thick": 2 } },
+    "shadow": {
+      "sm": "0 1px 2px rgba(0, 0, 0, 0.3)",
+      "base": "0 2px 8px rgba(0, 0, 0, 0.45)",
+      "lg": "0 6px 16px rgba(0, 0, 0, 0.55)",
+      "xl": "0 9px 28px rgba(0, 0, 0, 0.6)"
+    },
+    "motion": { "enabled": true, "duration": { "fast": "0.1s", "base": "0.2s", "slow": "0.3s" }, "easing": { "standard": "cubic-bezier(0.4,0,0.2,1)", "decelerate": "cubic-bezier(0,0,0.2,1)", "accelerate": "cubic-bezier(0.4,0,1,1)" } }
+  }
+}
