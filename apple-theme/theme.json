@@ -8,9 +8,6 @@
   "requires": [
     { "name": "tailwind", "source": "https://github.com/tailwindlabs/tailwindcss" }
   ],
-  "preview": ["examples/landing-page.png", "examples/home-page.png"],
-  "repository": "https://github.com/example/ui-theme-hub",
-  "license": "MIT",
   "tokens": {
     "color": {
       "primary": "#fa8c16",

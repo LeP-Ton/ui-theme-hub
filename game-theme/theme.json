@@ -8,9 +8,6 @@
   "requires": [
     { "name": "poem", "source": "https://github.com/LeP-Ton/poem.git" }
   ],
-  "preview": ["examples/game-hud.png"],
-  "repository": "https://github.com/example/ui-theme-hub",
-  "license": "MIT",
   "tokens": {
     "color": {
       "primary": "#177ddc",
