@@ -1,12 +1,13 @@
 {
-  "name": "game-theme",
+  "name": "cyberpunk-theme",
   "version": "1.0.0",
-  "description": "游戏UI主题，暗色沉浸，适合游戏界面和数据监控",
+  "description": "赛博朋克风格游戏UI主题，适合游戏界面和数据监控",
   "author": "设计团队A",
   "scene": "game",
-  "tags": ["game", "hud", "dark", "monitoring"],
+  "tags": ["game", "hud", "cyberpunk"],
   "requires": [
-    { "name": "poem", "source": "https://github.com/LeP-Ton/poem.git" }
+    { "name": "poem", "source": "https://github.com/LeP-Ton/poem.git" },
+    { "name": "augmented-ui", "source": "https://github.com/propjockey/augmented-ui"}
   ],
   "tokens": {
     "color": {

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UI Theme Hub - 主题仓库</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+</head>
+<body>
+  <!-- 顶部导航 -->
+  <header class="site-header">
+    <div class="header-content">
+      <div class="header-left">
+        <img class="header-logo" src="favicon.svg" alt="" width="28" height="28">
+        <h1 class="site-title">UI Theme Hub</h1>
+      </div>
+      <div class="search-wrapper">
+        <svg class="search-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input type="text" id="search-input" placeholder="搜索主题名称、描述、作者..." autocomplete="off">
+      </div>
+    </div>
+  </header>
+
+  <!-- 筛选栏 -->
+  <nav class="filter-bar" id="filter-bar">
+    <div class="filter-section">
+      <span class="filter-label">场景</span>
+      <div class="filter-chips" id="scene-chips"></div>
+    </div>
+    <div class="filter-section">
+      <span class="filter-label">标签</span>
+      <div class="filter-chips" id="tag-chips"></div>
+    </div>
+    <button class="clear-filters" id="clear-filters" style="display:none;">清除筛选</button>
+  </nav>
+
+  <!-- 主题卡片网格 -->
+  <main class="theme-grid" id="theme-grid">
+    <!-- 加载中提示 -->
+    <div class="loading" id="loading">
+      <div class="spinner"></div>
+      <p>加载主题数据...</p>
+    </div>
+  </main>
+
+  <!-- 底部 -->
+  <footer class="site-footer">
+    <p>UI Theme Hub &mdash; 统一主题仓库</p>
+    <a href="https://github.com/LeP-Ton/ui-theme-hub" target="_blank" rel="noopener">GitHub 仓库</a>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
