@@ -192,7 +192,7 @@
     const accent = colors.accent || '#a78bfa';
 
     /* 预览区域 */
-    const preview = theme.examples.length > 0
+    const preview = theme.previews.length > 0
       ? renderPreviewImages(theme)
       : renderPreviewFallback(theme, primary, secondary, accent);
 
@@ -232,13 +232,13 @@
 
   /* 渲染预览图片（多图水平滚动） */
   function renderPreviewImages(theme) {
-    const scrollable = theme.examples.length > 1 ? ' scrollable' : '';
-    const images = theme.examples.map(src =>
+    const scrollable = theme.previews.length > 1 ? ' scrollable' : '';
+    const images = theme.previews.map(src =>
       `<img src="${src}" alt="${theme.name} 预览" loading="lazy" onerror="this.style.display='none'">`
     ).join('');
 
-    const indicator = theme.examples.length > 1
-      ? `<span class="scroll-indicator">${theme.examples.length} 张</span>`
+    const indicator = theme.previews.length > 1
+      ? `<span class="scroll-indicator">${theme.previews.length} 张</span>`
       : '';
 
     return `<div class="card-preview${scrollable}">${images}${indicator}</div>`;

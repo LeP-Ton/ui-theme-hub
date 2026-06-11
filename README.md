@@ -19,13 +19,13 @@
 ├── theme.json              # 必需：介绍页 + tokens
 ├── patterns/               # 可选：页面/区块模板
 │   ├── pages/
-│   └── blocks/
+│   └── components/
 ├── standards/              # 可选：场景专属设计规范
 ├── assets/                 # 可选：物料素材
 │   ├── icons/
 │   ├── illustrations/
 │   └── fragments/
-└── examples/               # 可选：预览截图（.png/.webp）
+└── previews/               # 可选：预览截图（.png/.webp）
 ```
 
 ## 安装方式
@@ -44,7 +44,7 @@ git clone https://github.com/example/ui-theme-hub.git
 
 1. 在本仓库中创建新的主题目录
 2. 添加 theme.json（必需字段：name、version、scene、tokens）
-3. 添加 patterns/、standards/、examples/ 等
+3. 添加 patterns/、standards/、previews/ 等
 4. 提交 PR
 
 ## theme.json 必需字段

@@ -5,7 +5,7 @@ on:
     branches: [main]
     paths:
       - '**/theme.json'
-      - '**/examples/**'
+      - '**/previews/**'
       - 'docs/**'
       - 'scripts/**'
       - '.github/workflows/pages.yml'

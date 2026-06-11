@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-10T09:56:15.394Z",
+  "generatedAt": "2026-06-11T03:11:44.692Z",
   "themes": [
     {
       "dir": "apple-theme",
@@ -145,7 +145,7 @@
           }
         }
       },
-      "examples": []
+      "previews": []
     },
     {
       "dir": "boss-theme-blue",
@@ -290,7 +290,7 @@
           }
         }
       },
-      "examples": []
+      "previews": []
     },
     {
       "dir": "boss-theme-orange",
@@ -435,7 +435,7 @@
           }
         }
       },
-      "examples": []
+      "previews": []
     },
     {
       "dir": "cyberpunk-theme",
@@ -586,10 +586,10 @@
           }
         }
       },
-      "examples": [
-        "themes-examples/cyberpunk-theme/image1.png",
-        "themes-examples/cyberpunk-theme/image2.png",
-        "themes-examples/cyberpunk-theme/image3.png"
+      "previews": [
+        "theme-previews/cyberpunk-theme/image1.png",
+        "theme-previews/cyberpunk-theme/image2.png",
+        "theme-previews/cyberpunk-theme/image3.png"
       ]
     }
   ]

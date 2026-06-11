@@ -16,13 +16,13 @@ if (!fs.existsSync(DOCS_DIR)) {
 }
 
 /* docs 内存放预览图片的目录 */
-const EXAMPLES_OUTPUT_DIR = path.join(DOCS_DIR, 'themes-examples');
+const PREVIEW_OUTPUT_DIR = path.join(DOCS_DIR, 'theme-previews');
 
 /* 清理旧的预览图片目录，避免删除主题后残留图片 */
-if (fs.existsSync(EXAMPLES_OUTPUT_DIR)) {
-  fs.rmSync(EXAMPLES_OUTPUT_DIR, { recursive: true });
+if (fs.existsSync(PREVIEW_OUTPUT_DIR)) {
+  fs.rmSync(PREVIEW_OUTPUT_DIR, { recursive: true });
 }
-fs.mkdirSync(EXAMPLES_OUTPUT_DIR, { recursive: true });
+fs.mkdirSync(PREVIEW_OUTPUT_DIR, { recursive: true });
 
 /* 扫描仓库根目录下所有含 theme.json 的子目录 */
 const entries = fs.readdirSync(REPO_ROOT, { withFileTypes: true });
@@ -40,23 +40,23 @@ for (const entry of entries) {
   /* 读取 theme.json 元数据 */
   const themeData = JSON.parse(fs.readFileSync(themeJsonPath, 'utf-8'));
 
-  /* 扫描 examples/ 目录中的图片文件 */
-  const examplesDir = path.join(REPO_ROOT, entry.name, 'examples');
-  const examples = [];
-  if (fs.existsSync(examplesDir)) {
+  /* 扫描 previews/ 目录中的预览图片 */
+  const previewDir = path.join(REPO_ROOT, entry.name, 'previews');
+  const previews = [];
+  if (fs.existsSync(previewDir)) {
     /* 为每个主题创建独立子目录，避免文件名冲突 */
-    const themeOutputDir = path.join(EXAMPLES_OUTPUT_DIR, entry.name);
+    const themeOutputDir = path.join(PREVIEW_OUTPUT_DIR, entry.name);
     fs.mkdirSync(themeOutputDir, { recursive: true });
 
-    for (const file of fs.readdirSync(examplesDir)) {
+    for (const file of fs.readdirSync(previewDir)) {
       const ext = path.extname(file).toLowerCase();
       if (IMAGE_EXTS.has(ext)) {
-        /* 复制图片到 docs/themes-examples/{theme-name}/，使 GitHub Pages 可访问 */
-        const srcFile = path.join(examplesDir, file);
+        /* 复制图片到 docs/theme-previews/{theme-name}/，使 GitHub Pages 可访问 */
+        const srcFile = path.join(previewDir, file);
         const destFile = path.join(themeOutputDir, file);
         fs.copyFileSync(srcFile, destFile);
         /* 路径相对于 docs/，因为 GitHub Pages 从 docs/ 部署 */
-        examples.push(`themes-examples/${entry.name}/${file}`);
+        previews.push(`theme-previews/${entry.name}/${file}`);
       }
     }
   }
@@ -64,7 +64,7 @@ for (const entry of entries) {
   themes.push({
     dir: entry.name,
     ...themeData,
-    examples,
+    previews,
   });
 }
 
