@@ -8,10 +8,13 @@
     "preview": "npx http-server docs -p 3000 -c-1"
   },
   "devDependencies": {
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
     "esbuild": "^0.20.0",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "@types/react": "^18.3.3",
-    "@types/react-dom": "^18.3.0"
+    "react-dom": "^18.3.1"
+  },
+  "optionalDependencies": {
+    "antd": "^4.24.0"
   }
 }

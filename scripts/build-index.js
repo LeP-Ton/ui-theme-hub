@@ -2,7 +2,11 @@
  * 主题索引生成脚本
  * 扫描仓库中所有含 theme.json 的目录，生成 docs/themes-index.json
  * 同时将 .tsx pattern 文件编译为独立 HTML 预览，输出到 docs/pattern-previews/
- * React/ReactDOM 被完整打包进每个 HTML，确保独立可运行
+ *
+ * CSS 注入策略：
+ * - theme.json requires 中声明 style 字段的依赖，其 CSS 会自动内联到 HTML <style>
+ * - 无 style 字段（如 antd 6 CSS-in-JS、poem 等）则不做额外处理
+ * - 支持同时混合 antd 4（需 CSS）和 antd 6（无需 CSS）
  */
 const fs = require('fs');
 const path = require('path');
@@ -27,19 +31,46 @@ for (const dir of [PREVIEW_OUTPUT_DIR, PATTERN_PREVIEW_DIR]) {
   fs.mkdirSync(dir, { recursive: true });
 }
 
-/* 渲染入口代码：自动找到默认导出并渲染到 #root */
-const VIRTUAL_ENTRY = 'virtual-entry.jsx';
+/**
+ * 从 theme.json 的 requires 中收集需要内联的 CSS 文件内容
+ *
+ * requires 格式示例：
+ *   { "name": "antd", "source": "...", "style": "antd/dist/antd.min.css" }
+ *   — style 为相对于 node_modules 中该包的 CSS 路径
+ *   — 不声明 style 的依赖（如 antd 6 CSS-in-JS）不会触发任何 CSS 注入
+ */
+function collectRequireStyles(requires) {
+  const cssContents = [];
+
+  if (!Array.isArray(requires)) return cssContents;
+
+  for (const req of requires) {
+    if (!req.style) continue; /* 无 style 声明，跳过（CSS-in-JS 库） */
+
+    try {
+      /* 从 node_modules 中解析 CSS 文件路径 */
+      const cssPath = require.resolve(req.style, { paths: [REPO_ROOT] });
+      const content = fs.readFileSync(cssPath, 'utf-8');
+      cssContents.push(content);
+      console.log(`    🎨 注入 CSS: ${req.style} (${(content.length / 1024).toFixed(0)}KB)`);
+    } catch (err) {
+      console.warn(`    ⚠️ CSS 文件未找到: ${req.style} (依赖 ${req.name})`);
+    }
+  }
+
+  return cssContents;
+}
 
 /**
  * 编译 tsx 为独立 HTML 预览文件
- * 策略：通过 esbuild 插件将 tsx 文件作为虚拟入口，import 组件默认导出并渲染
+ * @param {string} tsxFilePath - 组件 tsx 文件路径
+ * @param {string[]} extraCss - 需要内联的额外 CSS 内容数组
  */
-async function compileTsxToHtml(tsxFilePath) {
-  /* 创建临时入口文件，import 组件并渲染 */
+async function compileTsxToHtml(tsxFilePath, extraCss = []) {
   const tmpDir = path.join(REPO_ROOT, '.tmp-build');
   fs.mkdirSync(tmpDir, { recursive: true });
 
-  /* 将原始 tsx 复制到临时目录（确保 esbuild 能解析同目录依赖） */
+  /* 将原始 tsx 复制到临时目录 */
   const tsxContent = fs.readFileSync(tsxFilePath, 'utf-8');
   const tmpComponent = path.join(tmpDir, 'component.tsx');
   fs.writeFileSync(tmpComponent, tsxContent);
@@ -74,7 +105,11 @@ root.render(React.createElement(Pattern));
     });
 
     const jsCode = fs.existsSync(outJs) ? fs.readFileSync(outJs, 'utf-8') : '';
-    const cssCode = fs.existsSync(outCss) ? fs.readFileSync(outCss, 'utf-8') : '';
+    /* esbuild 编译产出的 CSS（如有） */
+    const bundledCss = fs.existsSync(outCss) ? fs.readFileSync(outCss, 'utf-8') : '';
+
+    /* 拼装所有 CSS：重置样式 + esbuild 产出的 CSS + requires 声明的额外 CSS */
+    const allExtraCss = [bundledCss, ...extraCss].filter(Boolean).join('\n');
 
     const html = `<!DOCTYPE html>
 <html lang="zh-CN">
@@ -84,7 +119,7 @@ root.render(React.createElement(Pattern));
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{overflow:auto}
-${cssCode}
+${allExtraCss}
 </style>
 </head>
 <body>
@@ -114,6 +149,9 @@ async function main() {
 
     const themeData = JSON.parse(fs.readFileSync(themeJsonPath, 'utf-8'));
     console.log(`\n📦 处理主题: ${themeData.name}`);
+
+    /* 从 requires 收集需要内联的 CSS */
+    const extraCss = collectRequireStyles(themeData.requires);
 
     /* 扫描预览图片 */
     const previewDir = path.join(REPO_ROOT, entry.name, 'previews');
@@ -150,10 +188,10 @@ async function main() {
         const tsxPath = path.join(dir, file);
         const sourceCode = fs.readFileSync(tsxPath, 'utf-8');
 
-        /* 编译预览 HTML */
+        /* 编译预览 HTML（注入主题依赖的 CSS） */
         let previewPath = null;
         try {
-          const html = await compileTsxToHtml(tsxPath);
+          const html = await compileTsxToHtml(tsxPath, extraCss);
           const outputDir = path.join(PATTERN_PREVIEW_DIR, entry.name, key);
           fs.mkdirSync(outputDir, { recursive: true });
           const outputPath = path.join(outputDir, `${name}.html`);
