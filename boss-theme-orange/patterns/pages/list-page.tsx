@@ -4,6 +4,7 @@
  * 使用 antd 组件 + boss-theme-orange tokens：primary=#ff6600, sidebarActiveBg=#ff6600
  */
 import React from 'react';
+import 'antd/dist/antd.min.css';
 import { Layout, Menu, Breadcrumb, Input, Select, Button, Table, Tag, Pagination } from 'antd';
 import {
   DashboardOutlined,

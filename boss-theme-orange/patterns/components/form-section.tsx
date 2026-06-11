@@ -4,6 +4,7 @@
  * 使用 boss-theme-orange tokens：primary=#ff6600
  */
 import React from 'react';
+import 'antd/dist/antd.min.css';
 import { Card, Form, Input, Select, Button } from 'antd';
 
 interface FormSectionProps {

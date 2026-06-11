@@ -4,6 +4,7 @@
  * 使用 boss-theme-blue tokens：primary=#1677ff
  */
 import React from 'react';
+import 'antd/dist/antd.min.css';
 import { Card, Statistic } from 'antd';
 import { ArrowUpOutlined, ArrowDownOutlined } from '@ant-design/icons';
 

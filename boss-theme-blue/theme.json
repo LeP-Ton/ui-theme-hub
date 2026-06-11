@@ -6,7 +6,7 @@
   "scene": "enterprise",
   "tags": ["management", "enterprise", "boss platform", "blue"],
   "requires": [
-    { "name": "antd", "source": "https://github.com/ant-design/ant-design", "style": "antd/dist/antd.min.css" }
+    { "name": "antd", "source": "https://github.com/ant-design/ant-design" }
   ],
   "tokens": {
     "color": {

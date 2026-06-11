@@ -3,10 +3,10 @@
  * 扫描仓库中所有含 theme.json 的目录，生成 docs/themes-index.json
  * 同时将 .tsx pattern 文件编译为独立 HTML 预览，输出到 docs/pattern-previews/
  *
- * CSS 注入策略：
- * - theme.json requires 中声明 style 字段的依赖，其 CSS 会自动内联到 HTML <style>
- * - 无 style 字段（如 antd 6 CSS-in-JS、poem 等）则不做额外处理
- * - 支持同时混合 antd 4（需 CSS）和 antd 6（无需 CSS）
+ * CSS 处理策略：
+ * - .tsx 中 import 的 CSS（如 import 'antd/dist/antd.min.css'）由 esbuild css loader 自动提取
+ * - CSS-in-JS 库（antd 6、styled-components 等）的样式随 JS 打包，无需额外处理
+ * - 所有 CSS 统一内联到 HTML <style>，生成单一可运行文件
  */
 const fs = require('fs');
 const path = require('path');
@@ -32,41 +32,10 @@ for (const dir of [PREVIEW_OUTPUT_DIR, PATTERN_PREVIEW_DIR]) {
 }
 
 /**
- * 从 theme.json 的 requires 中收集需要内联的 CSS 文件内容
- *
- * requires 格式示例：
- *   { "name": "antd", "source": "...", "style": "antd/dist/antd.min.css" }
- *   — style 为相对于 node_modules 中该包的 CSS 路径
- *   — 不声明 style 的依赖（如 antd 6 CSS-in-JS）不会触发任何 CSS 注入
- */
-function collectRequireStyles(requires) {
-  const cssContents = [];
-
-  if (!Array.isArray(requires)) return cssContents;
-
-  for (const req of requires) {
-    if (!req.style) continue; /* 无 style 声明，跳过（CSS-in-JS 库） */
-
-    try {
-      /* 从 node_modules 中解析 CSS 文件路径 */
-      const cssPath = require.resolve(req.style, { paths: [REPO_ROOT] });
-      const content = fs.readFileSync(cssPath, 'utf-8');
-      cssContents.push(content);
-      console.log(`    🎨 注入 CSS: ${req.style} (${(content.length / 1024).toFixed(0)}KB)`);
-    } catch (err) {
-      console.warn(`    ⚠️ CSS 文件未找到: ${req.style} (依赖 ${req.name})`);
-    }
-  }
-
-  return cssContents;
-}
-
-/**
  * 编译 tsx 为独立 HTML 预览文件
- * @param {string} tsxFilePath - 组件 tsx 文件路径
- * @param {string[]} extraCss - 需要内联的额外 CSS 内容数组
+ * CSS 由 tsx 中的 import 驱动：import 'xxx.css' → esbuild 提取到 out.css → 内联到 HTML
  */
-async function compileTsxToHtml(tsxFilePath, extraCss = []) {
+async function compileTsxToHtml(tsxFilePath) {
   const tmpDir = path.join(REPO_ROOT, '.tmp-build');
   fs.mkdirSync(tmpDir, { recursive: true });
 
@@ -101,15 +70,13 @@ root.render(React.createElement(Pattern));
       define: {
         'process.env.NODE_ENV': '"production"',
       },
+      /* CSS loader：将 import 'xxx.css' 提取到 out.css */
+      loader: { '.css': 'css' },
       logLevel: 'silent',
     });
 
     const jsCode = fs.existsSync(outJs) ? fs.readFileSync(outJs, 'utf-8') : '';
-    /* esbuild 编译产出的 CSS（如有） */
-    const bundledCss = fs.existsSync(outCss) ? fs.readFileSync(outCss, 'utf-8') : '';
-
-    /* 拼装所有 CSS：重置样式 + esbuild 产出的 CSS + requires 声明的额外 CSS */
-    const allExtraCss = [bundledCss, ...extraCss].filter(Boolean).join('\n');
+    const cssCode = fs.existsSync(outCss) ? fs.readFileSync(outCss, 'utf-8') : '';
 
     const html = `<!DOCTYPE html>
 <html lang="zh-CN">
@@ -119,7 +86,7 @@ root.render(React.createElement(Pattern));
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{overflow:auto}
-${allExtraCss}
+${cssCode}
 </style>
 </head>
 <body>
@@ -149,9 +116,6 @@ async function main() {
 
     const themeData = JSON.parse(fs.readFileSync(themeJsonPath, 'utf-8'));
     console.log(`\n📦 处理主题: ${themeData.name}`);
-
-    /* 从 requires 收集需要内联的 CSS */
-    const extraCss = collectRequireStyles(themeData.requires);
 
     /* 扫描预览图片 */
     const previewDir = path.join(REPO_ROOT, entry.name, 'previews');
@@ -188,10 +152,9 @@ async function main() {
         const tsxPath = path.join(dir, file);
         const sourceCode = fs.readFileSync(tsxPath, 'utf-8');
 
-        /* 编译预览 HTML（注入主题依赖的 CSS） */
         let previewPath = null;
         try {
-          const html = await compileTsxToHtml(tsxPath, extraCss);
+          const html = await compileTsxToHtml(tsxPath);
           const outputDir = path.join(PATTERN_PREVIEW_DIR, entry.name, key);
           fs.mkdirSync(outputDir, { recursive: true });
           const outputPath = path.join(outputDir, `${name}.html`);

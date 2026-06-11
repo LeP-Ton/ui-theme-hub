@@ -33,15 +33,14 @@ scripts/
 ## 构建流程
 1. `node scripts/build-index.js` 扫描所有含 `theme.json` 的目录
 2. 复制主题预览图到 `docs/theme-previews/`
-3. 从 requires 中收集声明了 `style` 的依赖 CSS（如 antd.min.css）
-4. 编译 .tsx pattern 为独立 HTML（含 React 打包 + 依赖 CSS 内联）到 `docs/pattern-previews/`
-5. 生成 `docs/themes-index.json`（含 tokens、patterns source/preview 路径）
+3. 编译 .tsx pattern 为独立 HTML（含 React 打包 + CSS 内联）到 `docs/pattern-previews/`
+4. 生成 `docs/themes-index.json`（含 tokens、patterns source/preview 路径）
 
-## CSS 注入机制
-theme.json 的 requires 支持可选 `style` 字段，声明需内联到预览 HTML 的 CSS 路径：
-- `"style": "antd/dist/antd.min.css"` → 从 node_modules 读取并注入 `<style>`
-- 不声明 style → 不注入（CSS-in-JS 库如 antd 6 自动随 JS 打包）
-- 同时支持 antd 4（需 CSS）和 antd 6（无需 CSS），取决于 theme.json 声明
+## CSS 处理机制
+CSS 由 .tsx 中的 import 驱动，esbuild css loader 自动提取到 out.css 并内联到 HTML：
+- `import 'antd/dist/antd.min.css'` → esbuild 提取 CSS → 内联 HTML `<style>`
+- CSS-in-JS 库（antd 6 等）→ 样式随 JS 自动打包，无需 import CSS
+- theme.json requires 仅作为元数据，不参与构建逻辑
 
 ## 当前主题
 | 主题 | 场景 | 主色 | Patterns |
@@ -53,8 +52,9 @@ theme.json 的 requires 支持可选 `style` 字段，声明需内联到预览 H
 
 ## 关键认知
 - Pattern .tsx 可使用内联样式或第三方组件库（如 antd），由主题定位决定
+- CSS 通过 import 驱动，构建脚本不硬编码任何库的 CSS 路径
 - esbuild `write: false` 在此环境下 outputFiles 为空，需用 `write: true` + 读文件
+- esbuild `loader: { '.css': 'css' }` 将 import 的 CSS 提取到 out.css
 - React 18 不再通过 exports 暴露 UMD 路径，需全部打包进 bundle
 - 详情页 Pattern 支持「预览」（iframe）和「源码」（代码展示）模式切换
 - antd 为 optionalDependencies，未安装时仅影响使用 antd 的主题构建
-- 构建脚本通过 requires.style 声明驱动 CSS 注入，不硬编码任何库

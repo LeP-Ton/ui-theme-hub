@@ -4,6 +4,7 @@
  * 使用 antd 组件 + boss-theme-blue tokens：primary=#1677ff, sidebarBg=#001529
  */
 import React from 'react';
+import 'antd/dist/antd.min.css';
 import { Layout, Menu, Card, Statistic, Table, Tag, Avatar } from 'antd';
 import {
   DashboardOutlined,
