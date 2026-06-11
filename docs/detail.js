@@ -81,6 +81,11 @@
       if (theme.tokens.motion) tokenSections.push(renderMotionSection(theme.tokens.motion));
     }
 
+    /* patterns 区块 */
+    const patternsSection = theme.patterns
+      ? renderPatternsSection(theme.patterns)
+      : '';
+
     $main.innerHTML = `
       <div class="detail-hero">
         ${previewArea}
@@ -99,6 +104,7 @@
         </div>
       </div>
       ${tokenSections.join('')}
+      ${patternsSection}
     `;
 
     /* 绑定折叠事件 */
@@ -118,6 +124,17 @@
           label.textContent = '已复制!';
           setTimeout(() => { label.textContent = original; }, 1000);
         });
+      });
+    });
+
+    /* 绑定 pattern 展开/折叠 */
+    $main.querySelectorAll('.pattern-item-header').forEach(header => {
+      header.addEventListener('click', () => {
+        const content = header.nextElementSibling;
+        const toggle = header.querySelector('.pattern-item-toggle');
+        const isOpen = content.style.display !== 'none';
+        content.style.display = isOpen ? 'none' : 'block';
+        toggle.textContent = isOpen ? '展开' : '收起';
       });
     });
   }
@@ -332,6 +349,65 @@
         </div>
       </div>
     `;
+  }
+
+  /* ========== Patterns 区块渲染 ========== */
+
+  function renderPatternsSection(patterns) {
+    const hasPages = patterns.pages && patterns.pages.length > 0;
+    const hasComponents = patterns.components && patterns.components.length > 0;
+    if (!hasPages && !hasComponents) return '';
+
+    const pagesHTML = hasPages
+      ? renderPatternGroup('页面模板', 'pages', patterns.pages)
+      : '';
+    const componentsHTML = hasComponents
+      ? renderPatternGroup('组件', 'components', patterns.components)
+      : '';
+
+    return `
+      <div class="token-section">
+        <div class="token-section-title">
+          模式 (Patterns)
+          <span class="toggle-icon">▼</span>
+        </div>
+        <div class="token-section-body">
+          ${pagesHTML}
+          ${componentsHTML}
+        </div>
+      </div>
+    `;
+  }
+
+  /* 渲染一组 patterns（页面模板或组件） */
+  function renderPatternGroup(label, groupKey, items) {
+    const list = items.map((item, idx) => `
+      <div class="pattern-item" data-group="${groupKey}" data-index="${idx}">
+        <div class="pattern-item-header">
+          <span class="pattern-item-name">${escapeHTML(formatPatternName(item.name))}</span>
+          <span class="pattern-item-file">${escapeHTML(item.file)}</span>
+          <span class="pattern-item-toggle">展开</span>
+        </div>
+        <div class="pattern-item-content" style="display:none;">
+          <pre><code>${escapeHTML(item.content)}</code></pre>
+        </div>
+      </div>
+    `).join('');
+
+    return `
+      <div class="pattern-group">
+        <h3 class="pattern-group-title">${label} (${items.length})</h3>
+        <div class="pattern-list">${list}</div>
+      </div>
+    `;
+  }
+
+  /* 格式化 pattern 名称：hero-section → Hero Section */
+  function formatPatternName(name) {
+    return name
+      .split('-')
+      .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+      .join(' ');
   }
 
   /* ========== 工具函数 ========== */

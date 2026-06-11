@@ -9,6 +9,7 @@ const path = require('path');
 const REPO_ROOT = path.resolve(__dirname, '..');
 const DOCS_DIR = path.join(REPO_ROOT, 'docs');
 const IMAGE_EXTS = new Set(['.png', '.jpg', '.jpeg', '.webp', '.gif']);
+const MD_EXT = '.md';
 
 /* 确认 docs 目录存在 */
 if (!fs.existsSync(DOCS_DIR)) {
@@ -61,10 +62,36 @@ for (const entry of entries) {
     }
   }
 
+  /* 扫描 patterns/ 目录中的页面模板和组件 */
+  const patterns = { pages: [], components: [] };
+  const pagesDir = path.join(REPO_ROOT, entry.name, 'patterns', 'pages');
+  const componentsDir = path.join(REPO_ROOT, entry.name, 'patterns', 'components');
+
+  if (fs.existsSync(pagesDir)) {
+    for (const file of fs.readdirSync(pagesDir).sort()) {
+      if (path.extname(file).toLowerCase() === MD_EXT) {
+        const name = path.basename(file, MD_EXT);
+        const content = fs.readFileSync(path.join(pagesDir, file), 'utf-8');
+        patterns.pages.push({ name, file, content });
+      }
+    }
+  }
+
+  if (fs.existsSync(componentsDir)) {
+    for (const file of fs.readdirSync(componentsDir).sort()) {
+      if (path.extname(file).toLowerCase() === MD_EXT) {
+        const name = path.basename(file, MD_EXT);
+        const content = fs.readFileSync(path.join(componentsDir, file), 'utf-8');
+        patterns.components.push({ name, file, content });
+      }
+    }
+  }
+
   themes.push({
     dir: entry.name,
     ...themeData,
     previews,
+    patterns,
   });
 }
 

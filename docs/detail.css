@@ -379,6 +379,80 @@ body {
   color: var(--text-muted);
 }
 
+/* ========== Patterns 区块 ========== */
+.pattern-group { margin-bottom: 16px; }
+.pattern-group:last-child { margin-bottom: 0; }
+
+.pattern-group-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.pattern-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.pattern-item {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: border-color 0.15s;
+}
+
+.pattern-item:hover { border-color: var(--accent); }
+
+.pattern-item-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.15s;
+}
+
+.pattern-item-header:hover { background: var(--bg); }
+
+.pattern-item-name {
+  font-size: 14px;
+  font-weight: 600;
+  flex: 1;
+}
+
+.pattern-item-file {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-family: 'SF Mono', 'Fira Code', monospace;
+}
+
+.pattern-item-toggle {
+  font-size: 12px;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.pattern-item-content {
+  border-top: 1px solid var(--border);
+  background: #1e1e2e;
+  max-height: 480px;
+  overflow: auto;
+}
+
+.pattern-item-content pre {
+  margin: 0;
+  padding: 16px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #cdd6f4;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
 /* ========== 响应式 ========== */
 @media (max-width: 768px) {
   .detail-main { padding: 16px; }
