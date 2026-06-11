@@ -1,6 +1,7 @@
 /**
  * 主题详情页交互逻辑
  * 通过 URL 参数 ?theme=xxx 加载对应主题的完整信息
+ * 支持 Pattern 的源码/预览模式切换
  */
 (function () {
   'use strict';
@@ -127,16 +128,8 @@
       });
     });
 
-    /* 绑定 pattern 展开/折叠 */
-    $main.querySelectorAll('.pattern-item-header').forEach(header => {
-      header.addEventListener('click', () => {
-        const content = header.nextElementSibling;
-        const toggle = header.querySelector('.pattern-item-toggle');
-        const isOpen = content.style.display !== 'none';
-        content.style.display = isOpen ? 'none' : 'block';
-        toggle.textContent = isOpen ? '展开' : '收起';
-      });
-    });
+    /* 绑定 pattern 模式切换 */
+    bindPatternModeSwitch();
   }
 
   /* ========== 预览区渲染 ========== */
@@ -167,28 +160,23 @@
 
   /* 色彩区块 */
   function renderColorSection(color) {
-    /* 语义色 */
     const semanticKeys = ['primary', 'secondary', 'accent', 'success', 'warning', 'error', 'info'];
     const semanticItems = semanticKeys
       .filter(k => color[k])
       .map(k => renderColorItem(k, color[k]));
 
-    /* 背景色 */
     const bgItems = color.background
       ? flattenObj(color.background, 'bg').map(([k, v]) => renderColorItem(k, v))
       : [];
 
-    /* 文本色 */
     const textItems = color.text
       ? flattenObj(color.text, 'text').map(([k, v]) => renderColorItem(k, v))
       : [];
 
-    /* 边框色 */
     const borderItems = color.border
       ? flattenObj(color.border, 'border').map(([k, v]) => renderColorItem(k, v))
       : [];
 
-    /* 扩展色 */
     const extItems = color.extended
       ? flattenObj(color.extended, 'ext').map(([k, v]) => renderColorItem(k, v))
       : [];
@@ -379,20 +367,47 @@
     `;
   }
 
-  /* 渲染一组 patterns（页面模板或组件） */
+  /* 渲染一组 patterns */
   function renderPatternGroup(label, groupKey, items) {
-    const list = items.map((item, idx) => `
-      <div class="pattern-item" data-group="${groupKey}" data-index="${idx}">
-        <div class="pattern-item-header">
-          <span class="pattern-item-name">${escapeHTML(formatPatternName(item.name))}</span>
-          <span class="pattern-item-file">${escapeHTML(item.file)}</span>
-          <span class="pattern-item-toggle">展开</span>
+    const list = items.map((item, idx) => {
+      /* 默认展示预览模式（有 preview 时） */
+      const hasPreview = !!item.preview;
+      const defaultMode = hasPreview ? 'preview' : 'source';
+
+      return `
+        <div class="pattern-item" data-group="${groupKey}" data-index="${idx}" data-mode="${defaultMode}">
+          <div class="pattern-item-header">
+            <span class="pattern-item-name">${escapeHTML(formatPatternName(item.name))}</span>
+            <span class="pattern-item-file">${escapeHTML(item.file)}</span>
+            <div class="pattern-mode-switch">
+              ${hasPreview ? `
+                <button class="mode-btn mode-btn-preview ${defaultMode === 'preview' ? 'active' : ''}"
+                        data-mode="preview" title="预览模式">
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8m-4-4v4"/></svg>
+                  预览
+                </button>
+                <button class="mode-btn mode-btn-source ${defaultMode === 'source' ? 'active' : ''}"
+                        data-mode="source" title="源码模式">
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                  源码
+                </button>
+              ` : ''}
+            </div>
+            <span class="pattern-item-toggle">展开</span>
+          </div>
+          <div class="pattern-item-content" style="display:none;">
+            ${hasPreview ? `
+              <div class="pattern-preview-container" style="${defaultMode === 'preview' ? '' : 'display:none;'}">
+                <iframe class="pattern-iframe" src="${escapeHTML(item.preview)}" loading="lazy"></iframe>
+              </div>
+            ` : ''}
+            <div class="pattern-source-container" style="${defaultMode === 'source' ? '' : 'display:none;'}">
+              <pre><code>${escapeHTML(item.source)}</code></pre>
+            </div>
+          </div>
         </div>
-        <div class="pattern-item-content" style="display:none;">
-          <pre><code>${escapeHTML(item.content)}</code></pre>
-        </div>
-      </div>
-    `).join('');
+      `;
+    }).join('');
 
     return `
       <div class="pattern-group">
@@ -402,12 +417,91 @@
     `;
   }
 
-  /* 格式化 pattern 名称：hero-section → Hero Section */
+  /* 格式化 pattern 名称 */
   function formatPatternName(name) {
     return name
       .split('-')
       .map(w => w.charAt(0).toUpperCase() + w.slice(1))
       .join(' ');
+  }
+
+  /* ========== Pattern 模式切换事件绑定 ========== */
+
+  function bindPatternModeSwitch() {
+    /* 展开/折叠 */
+    $main.querySelectorAll('.pattern-item-header').forEach(header => {
+      header.addEventListener('click', (e) => {
+        /* 如果点击的是模式切换按钮，不触发折叠 */
+        if (e.target.closest('.pattern-mode-switch')) return;
+
+        const content = header.nextElementSibling;
+        const toggle = header.querySelector('.pattern-item-toggle');
+        const isOpen = content.style.display !== 'none';
+        content.style.display = isOpen ? 'none' : 'block';
+        toggle.textContent = isOpen ? '展开' : '收起';
+
+        /* 展开时自动调整 iframe 高度 */
+        if (!isOpen) {
+          requestAnimationFrame(() => adjustIframeHeight(content));
+        }
+      });
+    });
+
+    /* 模式切换按钮 */
+    $main.querySelectorAll('.mode-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const mode = btn.dataset.mode;
+        const item = btn.closest('.pattern-item');
+        const currentMode = item.dataset.mode;
+
+        if (currentMode === mode) return;
+        item.dataset.mode = mode;
+
+        /* 更新按钮状态 */
+        item.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        /* 切换显示区域 */
+        const previewContainer = item.querySelector('.pattern-preview-container');
+        const sourceContainer = item.querySelector('.pattern-source-container');
+
+        if (previewContainer) {
+          previewContainer.style.display = mode === 'preview' ? '' : 'none';
+        }
+        if (sourceContainer) {
+          sourceContainer.style.display = mode === 'source' ? '' : 'none';
+        }
+      });
+    });
+
+    /* iframe 加载后自动调整高度 */
+    $main.querySelectorAll('.pattern-iframe').forEach(iframe => {
+      iframe.addEventListener('load', () => {
+        const container = iframe.closest('.pattern-item-content');
+        if (container && container.style.display !== 'none') {
+          adjustIframeHeight(container);
+        }
+      });
+    });
+  }
+
+  /* 自动调整 iframe 高度以适配内容 */
+  function adjustIframeHeight(container) {
+    const iframe = container.querySelector('.pattern-iframe');
+    if (!iframe) return;
+
+    try {
+      const doc = iframe.contentDocument || iframe.contentWindow?.document;
+      if (doc && doc.body) {
+        const height = doc.body.scrollHeight;
+        /* 限制最大高度 */
+        iframe.style.height = Math.min(Math.max(height, 200), 800) + 'px';
+      }
+    } catch (e) {
+      /* 跨域 iframe 无法读取内容，使用默认高度 */
+      iframe.style.height = '480px';
+    }
   }
 
   /* ========== 工具函数 ========== */

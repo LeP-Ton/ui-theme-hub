@@ -393,7 +393,7 @@ body {
 .pattern-list {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
 }
 
 .pattern-item {
@@ -429,20 +429,78 @@ body {
   font-family: 'SF Mono', 'Fira Code', monospace;
 }
 
+/* 模式切换按钮组 */
+.pattern-mode-switch {
+  display: flex;
+  gap: 2px;
+  background: var(--bg);
+  border-radius: 6px;
+  padding: 2px;
+  flex-shrink: 0;
+}
+
+.mode-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 3px 8px;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  font-size: 12px;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+
+.mode-btn:hover { color: var(--text-primary); }
+
+.mode-btn.active {
+  background: var(--card-bg);
+  color: var(--accent);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+  font-weight: 600;
+}
+
 .pattern-item-toggle {
   font-size: 12px;
   color: var(--accent);
   flex-shrink: 0;
+  margin-left: 4px;
 }
 
+/* Pattern 内容区 */
 .pattern-item-content {
   border-top: 1px solid var(--border);
+}
+
+/* 预览模式：iframe 容器 */
+.pattern-preview-container {
+  background: #ffffff;
+  padding: 0;
+}
+
+.pattern-iframe {
+  width: 100%;
+  min-height: 300px;
+  height: 480px;
+  border: none;
+  display: block;
+}
+
+/* 源码模式：代码展示 */
+.pattern-source-container {
   background: #1e1e2e;
-  max-height: 480px;
+  max-height: 600px;
   overflow: auto;
 }
 
-.pattern-item-content pre {
+.pattern-source-container::-webkit-scrollbar { width: 6px; height: 6px; }
+.pattern-source-container::-webkit-scrollbar-track { background: transparent; }
+.pattern-source-container::-webkit-scrollbar-thumb { background: #45475a; border-radius: 3px; }
+
+.pattern-source-container pre {
   margin: 0;
   padding: 16px;
   font-size: 13px;
@@ -460,8 +518,11 @@ body {
   .detail-preview-area img { height: 220px; }
   .detail-preview-fallback { height: 220px; }
   .color-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+  .pattern-iframe { height: 360px; }
 }
 
 @media (max-width: 480px) {
   .color-grid { grid-template-columns: 1fr 1fr; }
+  .mode-btn svg { display: none; }
+  .pattern-iframe { height: 280px; }
 }
