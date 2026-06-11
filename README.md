@@ -49,7 +49,7 @@ git clone https://github.com/example/ui-theme-hub.git
 
 ## theme.json 必需字段
 
-详见 [ui-design-skill SKILL.md](https://github.com/example/ui-design-skill/blob/main/SKILL.md) 中的规范定义。
+详见 [ui-design-skill SKILL.md](https://github.com/LeP-Ton/ui-design-skill/blob/main/SKILL.md) 中的规范定义。
 
 ## 许可证
 

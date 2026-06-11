@@ -223,7 +223,7 @@
           <div class="card-tags">${tags}</div>
           <div class="card-footer">
             <span class="card-author">by ${escapeHTML(theme.author)}</span>
-            <a class="card-link" href="../${theme.dir}/">查看详情</a>
+            <a class="card-link" href="detail.html?theme=${encodeURIComponent(theme.dir)}">查看详情</a>
           </div>
         </div>
       </article>
