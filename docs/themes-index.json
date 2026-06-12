@@ -1,8 +1,9 @@
 {
-  "generatedAt": "2026-06-11T13:15:02.236Z",
+  "generatedAt": "2026-06-12T03:24:43.902Z",
   "themes": [
     {
       "dir": "apple-theme",
+      "id": "apple-theme",
       "name": "apple-theme",
       "version": "1.0.0",
       "description": "Apple 风格主题，简洁优雅，适合C端产品、营销落地页和移动端",
@@ -167,6 +168,7 @@
     },
     {
       "dir": "boss-theme-blue",
+      "id": "boss-theme-blue",
       "name": "boss-theme-blue",
       "version": "1.0.0",
       "description": "Boss平台B端管理系统蓝色效能主题，专业科技感，适合企业级应用",
@@ -330,6 +332,7 @@
     },
     {
       "dir": "boss-theme-orange",
+      "id": "boss-theme-orange",
       "name": "boss-theme-orange",
       "version": "1.0.0",
       "description": "Boss平台B端管理系统橙色业务主题，专业科技感，适合企业级应用",
@@ -493,6 +496,7 @@
     },
     {
       "dir": "cyberpunk-theme",
+      "id": "cyberpunk-theme",
       "name": "cyberpunk-theme",
       "version": "1.0.0",
       "description": "赛博朋克风格游戏UI主题，适合游戏界面和数据监控",

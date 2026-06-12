@@ -43,12 +43,20 @@ CSS 由 .tsx 中的 import 驱动，esbuild css loader 自动提取到 out.css �
 - theme.json requires 仅作为元数据，不参与构建逻辑
 
 ## 当前主题
-| 主题 | 场景 | 主色 | Patterns |
-|------|------|------|----------|
+| 主题 ID | 场景 | 主色 | Patterns |
+|---------|------|------|----------|
 | apple-theme | C端 | #fa8c16 (橙) | landing-page, feature-grid |
 | boss-theme-blue | 企业级 | #1677ff (蓝) | dashboard, stats-cards |
 | boss-theme-orange | 企业级 | #ff6600 (橙) | list-page, form-section |
 | cyberpunk-theme | 游戏 | #177ddc (蓝紫) | game-hud, character-panel |
+
+## URL 参数规范
+外部系统（如 ui-design-skill）可通过 query string 控制页面状态：
+- `?scene=enterprise` — 按场景筛选
+- `?tags=blue,management` — 按标签筛选（逗号分隔）
+- `?q=管理` — 搜索关键词回填
+- `?installed=apple-theme,boss-theme-blue` — 已下载主题标记并排前
+- 组合示例：`?scene=enterprise&installed=boss-theme-blue`
 
 ## 关键认知
 - Pattern .tsx 可使用内联样式或第三方组件库（如 antd），由主题定位决定
@@ -58,3 +66,5 @@ CSS 由 .tsx 中的 import 驱动，esbuild css loader 自动提取到 out.css �
 - React 18 不再通过 exports 暴露 UMD 路径，需全部打包进 bundle
 - 详情页 Pattern 支持「预览」（iframe）和「源码」（代码展示）模式切换
 - antd 为 optionalDependencies，未安装时仅影响使用 antd 的主题构建
+- theme.json 的 `id` 字段为主题唯一标识，URL 参数 `installed` 按 id 匹配
+- URL 筛选参数从 hash 迁移到 search query string，方便外部系统拼接链接

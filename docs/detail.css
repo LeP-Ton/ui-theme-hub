@@ -181,6 +181,24 @@ body {
   border-radius: 9999px;
 }
 
+.detail-installed-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  background: #f0fdf4;
+  color: #16a34a;
+  border: 1px solid #bbf7d0;
+}
+
+.detail-installed-badge::before {
+  content: '✓';
+  font-size: 10px;
+}
+
 .detail-desc {
   font-size: 15px;
   color: var(--text-secondary);

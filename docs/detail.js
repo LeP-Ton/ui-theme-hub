@@ -14,6 +14,7 @@
   async function init() {
     const params = new URLSearchParams(window.location.search);
     const themeName = params.get('theme');
+    const isInstalled = params.has('installed');
 
     if (!themeName) {
       showNotFound('缺少主题参数');
@@ -39,14 +40,14 @@
 
     $pageTitle.textContent = theme.name;
     document.title = `${theme.name} - UI Theme Hub`;
-    renderDetail(theme);
+    renderDetail(theme, isInstalled);
 
     $loading.style.display = 'none';
     $main.style.display = 'block';
   }
 
   /* ========== 渲染详情页 ========== */
-  function renderDetail(theme) {
+  function renderDetail(theme, isInstalled) {
     const colors = theme.tokens?.color || {};
     const primary = colors.primary || '#6366f1';
     const secondary = colors.secondary || '#818cf8';
@@ -94,6 +95,7 @@
           <div class="detail-header">
             <h1 class="detail-name">${escapeHTML(theme.name)}</h1>
             <span class="detail-version">v${escapeHTML(theme.version)}</span>
+            ${isInstalled ? '<span class="detail-installed-badge">已下载</span>' : ''}
           </div>
           <p class="detail-desc">${escapeHTML(theme.description)}</p>
           <div class="detail-meta">
