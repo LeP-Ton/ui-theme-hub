@@ -153,7 +153,7 @@
       chip.classList.toggle('active', state.activeTags.has(chip.dataset.tag));
     });
     const hasFilter = state.activeScene || state.activeTags.size > 0 || state.searchQuery;
-    $clearFilters.style.display = hasFilter ? 'inline-flex' : 'none';
+    $clearFilters.style.display = hasFilter ? 'block' : 'none';
   }
 
   /* ========== 筛选 + 排序逻辑 ========== */
@@ -245,8 +245,10 @@
         <div class="card-body">
           <div class="card-header">
             <h2 class="card-name">${escapeHTML(theme.name)}</h2>
-            <span class="card-version">v${escapeHTML(theme.version)}</span>
-            ${installedBadge}
+            <div class="card-info">
+              <span class="card-version">v${escapeHTML(theme.version)}</span>
+              ${installedBadge}
+            </div>
           </div>
           <p class="card-description">${escapeHTML(theme.description)}</p>
           <div class="card-meta">
