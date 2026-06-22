@@ -1,6 +1,14 @@
 # AgentDocs 索引
 
 ## 当前变更文档
+`workflow/260622172639-download-btn-style.md` - 下载按钮样式调整：纯文字风格 + 详情页同行右侧
+`workflow/260622164427-install-command-mac-entry.md` - 移除安装脚本，改为纯下载模式
+`workflow/260622100000-install-download-package.md` - 安装方式改为下载安装包（.command/.bat 双击即装）
+`workflow/260616090000-install-zip-approach.md` - 安装脚本：zip 下载方案 + github.com 域名
+`workflow/260612163000-install-curl-command.md` - 安装命令修正：npx → curl（raw URL 方案已废弃）
+`workflow/260612153000-install-remote-only.md` - 安装脚本修正：数据源为远程仓库（之前的 npx 命令已废弃）
+`workflow/260612143000-install-auto-detect.md` - 安装脚本升级：自动定位 skill 目录（本地仓库部分已废弃）
+`workflow/260612110000-install-script-and-btn.md` - 主题安装脚本 + 页面安装按钮
 `workflow/260612100000-theme-id-url-params.md` - 主题 ID + URL 参数：已下载标记与筛选回填
 `workflow/260611213000-import-driven-css.md` - CSS 注入改为 import 驱动，删除 requires.style 机制
 `workflow/260611211500-require-style-css-inject.md` - 通用 CSS 注入机制 + Boss 主题使用 antd 组件（已废弃，被上一条替代）

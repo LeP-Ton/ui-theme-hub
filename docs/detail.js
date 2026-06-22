@@ -96,6 +96,7 @@
             <h1 class="detail-name">${escapeHTML(theme.name)}</h1>
             <span class="detail-version">v${escapeHTML(theme.version)}</span>
             ${isInstalled ? '<span class="detail-installed-badge">已下载</span>' : ''}
+            <button class="detail-install-btn" data-theme-id="${escapeHTML(theme.id || theme.dir)}">⬇ 下载主题</button>
           </div>
           <p class="detail-desc">${escapeHTML(theme.description)}</p>
           <div class="detail-meta">
@@ -127,6 +128,18 @@
           label.textContent = '已复制!';
           setTimeout(() => { label.textContent = original; }, 1000);
         });
+      });
+    });
+
+    /* 绑定下载按钮：下载主题 zip 包 */
+    $main.querySelectorAll('.detail-install-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const themeId = btn.dataset.themeId;
+        const ts = Date.now();
+        const a = document.createElement('a');
+        a.href = 'packages/' + themeId + '.zip';
+        a.download = themeId + '-' + ts + '.zip';
+        a.click();
       });
     });
 

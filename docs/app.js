@@ -142,6 +142,22 @@
       parseURLParams();
       render();
     });
+
+    /* 下载按钮：下载主题 zip 包 */
+    $grid.addEventListener('click', (e) => {
+      const btn = e.target.closest('.card-install-btn');
+      if (!btn) return;
+
+      e.stopPropagation();
+      const themeId = btn.dataset.themeId;
+      /* 下载主题 zip 包，用户自行放置到目标目录 */
+      const ts = Date.now();
+      const a = document.createElement('a');
+      a.href = 'packages/' + themeId + '.zip';
+      a.download = themeId + '-' + ts + '.zip';
+      a.click();
+      showToast('已下载 ' + themeId + '，解压后放置到目标目录即可');
+    });
   }
 
   /* 同步标签 UI 状态 */
@@ -258,7 +274,11 @@
           <div class="card-tags">${tags}</div>
           <div class="card-footer">
             <span class="card-author">by ${escapeHTML(theme.author)}</span>
-            <a class="card-link" href="detail.html?theme=${encodeURIComponent(theme.dir)}${isInstalled ? '&installed=1' : ''}">查看详情</a>
+            <div class="card-actions">
+              <button class="card-install-btn" data-theme-id="${escapeHTML(themeId)}" title="下载主题">⬇ 下载主题</button>
+              <span class="card-action-sep">|</span>
+              <a class="card-link" href="detail.html?theme=${encodeURIComponent(theme.dir)}${isInstalled ? '&installed=1' : ''}">查看详情 →</a>
+            </div>
           </div>
         </div>
       </article>
@@ -315,6 +335,21 @@
     const div = document.createElement('div');
     div.textContent = str;
     return div.innerHTML;
+  }
+
+  /* 轻量 Toast 提示 */
+  function showToast(message, duration = 2500) {
+    /* 复用或创建 toast 容器 */
+    let toast = document.getElementById('app-toast');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.id = 'app-toast';
+      document.body.appendChild(toast);
+    }
+    toast.textContent = message;
+    toast.classList.add('visible');
+    clearTimeout(toast._timer);
+    toast._timer = setTimeout(() => toast.classList.remove('visible'), duration);
   }
 
   /* ========== URL 参数同步 ========== */

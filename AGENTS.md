@@ -58,6 +58,16 @@ CSS 由 .tsx 中的 import 驱动，esbuild css loader 自动提取到 out.css �
 - `?installed=apple-theme,boss-theme-blue` — 已下载主题标记并排前
 - 组合示例：`?scene=enterprise&installed=boss-theme-blue`
 
+## 下载机制
+页面「下载」按钮 → 下载主题 zip 包（仅含主题目录） → 用户自行解压放置到目标目录
+
+主题包构建：build-index.js 为每个主题生成 `{themeId}.zip`（仅含主题目录），输出到 `docs/packages/`
+
+关键特性：
+- 下载文件名拼时间戳（`{themeId}-{timestamp}.zip`），避免 Finder 重复下载追加括号
+- zip 纯净，只含主题文件，不含安装脚本
+- 构建时生成 zip，前端直接下载
+
 ## 关键认知
 - Pattern .tsx 可使用内联样式或第三方组件库（如 antd），由主题定位决定
 - CSS 通过 import 驱动，构建脚本不硬编码任何库的 CSS 路径

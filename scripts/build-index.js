@@ -10,6 +10,7 @@
  */
 const fs = require('fs');
 const path = require('path');
+const { execSync } = require('child_process');
 const esbuild = require('esbuild');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
@@ -199,6 +200,49 @@ async function main() {
   });
   console.log(`\n✅ 已生成索引：${themes.length} 个主题，${totalPatterns} 个 Pattern 预览`);
   console.log(`   输出: ${outputPath}`);
+
+  /* ========== 生成主题安装包 ========== */
+  const PACKAGES_DIR = path.join(DOCS_DIR, 'packages');
+  if (fs.existsSync(PACKAGES_DIR)) fs.rmSync(PACKAGES_DIR, { recursive: true });
+  fs.mkdirSync(PACKAGES_DIR, { recursive: true });
+
+  for (const theme of themes) {
+    const themeId = theme.id || theme.dir;
+    const themeDir = path.join(REPO_ROOT, theme.dir);
+    const tmpDir = path.join(REPO_ROOT, '.tmp-package', themeId);
+
+    /* 准备临时打包目录：仅主题目录，用户自行放置 */
+    fs.mkdirSync(tmpDir, { recursive: true });
+    const pkgThemeDir = path.join(tmpDir, themeId);
+    fs.mkdirSync(pkgThemeDir, { recursive: true });
+
+    /* 复制主题目录（排除 previews，下载后不需要） */
+    for (const entry of fs.readdirSync(themeDir, { withFileTypes: true })) {
+      if (entry.name === 'previews') continue;
+      const src = path.join(themeDir, entry.name);
+      const dest = path.join(pkgThemeDir, entry.name);
+      if (entry.isDirectory()) {
+        fs.cpSync(src, dest, { recursive: true });
+      } else {
+        fs.copyFileSync(src, dest);
+      }
+    }
+
+    /* 打 zip 包 */
+    const zipPath = path.join(PACKAGES_DIR, `${themeId}.zip`);
+    try {
+      execSync(`cd "${tmpDir}" && zip -r -q "${zipPath}" .`, { stdio: 'pipe' });
+      const size = (fs.statSync(zipPath).size / 1024).toFixed(0);
+      console.log(`  📦 ${themeId}.zip (${size} KB)`);
+    } catch (err) {
+      console.error(`  ✗ 打包 ${themeId} 失败:`, err.message);
+    }
+
+    /* 清理临时目录 */
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+
+  console.log(`\n✅ 已生成 ${themes.length} 个主题包 → ${PACKAGES_DIR}`);
 }
 
 main().catch(err => {

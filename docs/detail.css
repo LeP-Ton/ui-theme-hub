@@ -173,6 +173,25 @@ body {
   font-weight: 700;
 }
 
+.detail-install-btn {
+  margin-left: auto;
+  padding: 5px 14px;
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+
+.detail-install-btn:hover {
+  background: var(--accent);
+  color: #fff;
+}
+
 .detail-version {
   font-size: 13px;
   color: var(--text-muted);
@@ -198,6 +217,8 @@ body {
   content: '✓';
   font-size: 10px;
 }
+
+
 
 .detail-desc {
   font-size: 15px;
