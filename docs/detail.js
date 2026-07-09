@@ -23,10 +23,9 @@
 
     let theme;
     try {
-      const res = await fetch('./themes-index.json');
+      const res = await fetch(`./themes/${encodeURIComponent(themeName)}.json`);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
-      theme = (data.themes || []).find(t => t.dir === themeName || t.name === themeName);
+      theme = await res.json();
     } catch (err) {
       console.error('加载主题数据失败:', err);
       showNotFound('无法加载主题数据');

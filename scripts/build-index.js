@@ -186,20 +186,52 @@ async function main() {
   /* 排序输出 */
   themes.sort((a, b) => a.name.localeCompare(b.name));
 
-  const output = {
-    generatedAt: new Date().toISOString(),
-    themes,
-  };
+  /* ========== 生成 themes-summary.json（轻量索引，供列表页和 AI 场景识别） ========== */
+  const summary = themes.map(t => ({
+    dir: t.dir,
+    id: t.id || t.dir,
+    name: t.name,
+    version: t.version,
+    description: t.description,
+    author: t.author,
+    scene: t.scene,
+    tags: t.tags,
+    requires: t.requires,
+    previews: t.previews,
+    /* 列表页需要主色信息渲染 fallback 预览 */
+    primaryColor: t.tokens?.color?.primary || '#6366f1',
+    secondaryColor: t.tokens?.color?.secondary || '#818cf8',
+    accentColor: t.tokens?.color?.accent || '#a78bfa',
+    /* 列表页需要 pattern 名称列表 */
+    patternPages: (t.patterns?.pages || []).map(p => p.name),
+    patternComponents: (t.patterns?.components || []).map(p => p.name),
+  }));
 
-  const outputPath = path.join(DOCS_DIR, 'themes-index.json');
-  fs.writeFileSync(outputPath, JSON.stringify(output, null, 2) + '\n');
+  const summaryOutput = {
+    generatedAt: new Date().toISOString(),
+    themes: summary,
+  };
+  const summaryPath = path.join(DOCS_DIR, 'themes-summary.json');
+  fs.writeFileSync(summaryPath, JSON.stringify(summaryOutput, null, 2) + '\n');
+
+  /* ========== 生成各主题 detail.json（单主题全量数据，供详情页按需加载） ========== */
+  const DETAILS_DIR = path.join(DOCS_DIR, 'themes');
+  if (fs.existsSync(DETAILS_DIR)) fs.rmSync(DETAILS_DIR, { recursive: true });
+  fs.mkdirSync(DETAILS_DIR, { recursive: true });
+
+  for (const theme of themes) {
+    const themeId = theme.id || theme.dir;
+    const detailPath = path.join(DETAILS_DIR, `${themeId}.json`);
+    fs.writeFileSync(detailPath, JSON.stringify(theme, null, 2) + '\n');
+  }
 
   let totalPatterns = 0;
   themes.forEach(t => {
     totalPatterns += (t.patterns.pages?.length || 0) + (t.patterns.components?.length || 0);
   });
   console.log(`\n✅ 已生成索引：${themes.length} 个主题，${totalPatterns} 个 Pattern 预览`);
-  console.log(`   输出: ${outputPath}`);
+  console.log(`   轻量索引: ${summaryPath}`);
+  console.log(`   详情索引: ${DETAILS_DIR}/`);
 
   /* ========== 生成主题安装包 ========== */
   const PACKAGES_DIR = path.join(DOCS_DIR, 'packages');

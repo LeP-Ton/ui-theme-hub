@@ -1,0 +1,164 @@
+{
+  "dir": "boss-theme-blue",
+  "id": "boss-theme-blue",
+  "name": "boss-theme-blue",
+  "version": "1.0.0",
+  "description": "Boss平台B端管理系统蓝色效能主题，专业科技感，适合企业级应用",
+  "author": "设计团队B",
+  "scene": "enterprise",
+  "tags": [
+    "management",
+    "enterprise",
+    "boss platform",
+    "blue"
+  ],
+  "requires": [
+    {
+      "name": "antd",
+      "source": "https://github.com/ant-design/ant-design"
+    }
+  ],
+  "tokens": {
+    "color": {
+      "primary": "#1677ff",
+      "secondary": "#597ef7",
+      "accent": "#13c2c2",
+      "success": "#52c41a",
+      "warning": "#faad14",
+      "error": "#ff4d4f",
+      "info": "#1677ff",
+      "background": {
+        "base": "#ffffff",
+        "elevated": "#ffffff",
+        "muted": "#f5f5f5"
+      },
+      "text": {
+        "primary": "rgba(0, 0, 0, 0.88)",
+        "secondary": "rgba(0, 0, 0, 0.65)",
+        "muted": "rgba(0, 0, 0, 0.45)",
+        "inverse": "#ffffff"
+      },
+      "border": {
+        "default": "#d9d9d9",
+        "muted": "#f0f0f0"
+      },
+      "extended": {
+        "sidebarBg": "#001529",
+        "sidebarText": "rgba(255, 255, 255, 0.65)",
+        "sidebarActiveBg": "#1677ff",
+        "headerBg": "#ffffff",
+        "tableHeaderBg": "#fafafa",
+        "tableStripeBg": "rgba(0, 0, 0, 0.02)",
+        "hoverBg": "rgba(0, 0, 0, 0.04)"
+      }
+    },
+    "spacing": {
+      "unit": 4,
+      "scale": [
+        0,
+        4,
+        8,
+        12,
+        16,
+        20,
+        24,
+        32,
+        40,
+        48,
+        64,
+        80,
+        96
+      ],
+      "extended": {
+        "headerHeight": 56,
+        "sidebarWidth": 240,
+        "sidebarCollapsedWidth": 80,
+        "contentPadding": 24,
+        "cardSpacing": 16,
+        "tableRowHeight": 54,
+        "tableCellPaddingH": 16
+      }
+    },
+    "typography": {
+      "fontFamily": {
+        "base": "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif",
+        "heading": "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+        "code": "'SF Mono', 'Fira Code', 'Fira Mono', 'Roboto Mono', monospace"
+      },
+      "fontSize": {
+        "xs": 12,
+        "sm": 13,
+        "base": 14,
+        "lg": 16,
+        "xl": 20,
+        "2xl": 24,
+        "3xl": 30,
+        "4xl": 36
+      },
+      "fontWeight": {
+        "normal": 400,
+        "medium": 500,
+        "semibold": 600,
+        "bold": 700
+      },
+      "lineHeight": {
+        "tight": 1.25,
+        "base": 1.5,
+        "relaxed": 1.75
+      }
+    },
+    "border": {
+      "radius": {
+        "none": 0,
+        "sm": 4,
+        "base": 6,
+        "lg": 8,
+        "xl": 12,
+        "full": 9999
+      },
+      "width": {
+        "thin": 1,
+        "base": 1,
+        "thick": 2
+      }
+    },
+    "shadow": {
+      "sm": "0 1px 2px 0 rgba(0, 0, 0, 0.03), 0 1px 6px -1px rgba(0, 0, 0, 0.02)",
+      "base": "0 1px 2px 0 rgba(0, 0, 0, 0.03), 0 1px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px 0 rgba(0, 0, 0, 0.02)",
+      "lg": "0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 3px 6px -4px rgba(0, 0, 0, 0.12)",
+      "xl": "0 9px 28px 8px rgba(0, 0, 0, 0.05), 0 6px 16px 0 rgba(0, 0, 0, 0.08)"
+    },
+    "motion": {
+      "enabled": true,
+      "duration": {
+        "fast": "0.1s",
+        "base": "0.2s",
+        "slow": "0.3s"
+      },
+      "easing": {
+        "standard": "cubic-bezier(0.4,0,0.2,1)",
+        "decelerate": "cubic-bezier(0,0,0.2,1)",
+        "accelerate": "cubic-bezier(0.4,0,1,1)"
+      }
+    }
+  },
+  "previews": [],
+  "patterns": {
+    "pages": [
+      {
+        "name": "dashboard",
+        "file": "dashboard.tsx",
+        "source": "/**\n * Boss 蓝色主题 - 仪表盘页面\n * 典型企业级管理后台首页，含统计卡片 + 数据表格\n * 使用 antd 组件 + boss-theme-blue tokens：primary=#1677ff, sidebarBg=#001529\n */\nimport React from 'react';\nimport 'antd/dist/antd.min.css';\nimport { Layout, Menu, Card, Statistic, Table, Tag, Avatar } from 'antd';\nimport {\n  DashboardOutlined,\n  UserOutlined,\n  ShoppingCartOutlined,\n  BarChartOutlined,\n  SettingOutlined,\n} from '@ant-design/icons';\n\nconst { Sider, Header, Content } = Layout;\n\n/* 侧边栏菜单项 */\nconst menuItems = [\n  { key: 'dashboard', icon: <DashboardOutlined />, label: '仪表盘' },\n  { key: 'users', icon: <UserOutlined />, label: '用户管理' },\n  { key: 'orders', icon: <ShoppingCartOutlined />, label: '订单中心' },\n  { key: 'reports', icon: <BarChartOutlined />, label: '数据报表' },\n  { key: 'settings', icon: <SettingOutlined />, label: '系统设置' },\n];\n\n/* 统计卡片数据 */\nconst stats = [\n  { title: '今日订单', value: 1280, suffix: '单', trend: 12.5 },\n  { title: '活跃用户', value: 8642, suffix: '人', trend: 5.2 },\n  { title: '总收入', value: 128560, prefix: '¥', trend: 8.1 },\n  { title: '转化率', value: 3.6, suffix: '%', trend: 0.3 },\n];\n\n/* 表格列定义 */\nconst columns = [\n  { title: '订单号', dataIndex: 'id', key: 'id' },\n  { title: '客户', dataIndex: 'name', key: 'name' },\n  { title: '金额', dataIndex: 'amount', key: 'amount' },\n  {\n    title: '状态',\n    dataIndex: 'status',\n    key: 'status',\n    render: (status: string) => {\n      const colorMap: Record<string, string> = { '已完成': 'green', '处理中': 'blue', '待支付': 'orange' };\n      return <Tag color={colorMap[status]}>{status}</Tag>;\n    },\n  },\n  { title: '时间', dataIndex: 'time', key: 'time' },\n];\n\n/* 表格数据 */\nconst data = [\n  { key: '1', id: 'ORD-2026001', name: '张三', amount: '¥1,200', status: '已完成', time: '10:30' },\n  { key: '2', id: 'ORD-2026002', name: '李四', amount: '¥3,450', status: '处理中', time: '11:15' },\n  { key: '3', id: 'ORD-2026003', name: '王五', amount: '¥890', status: '已完成', time: '14:22' },\n  { key: '4', id: 'ORD-2026004', name: '赵六', amount: '¥2,100', status: '待支付', time: '16:05' },\n];\n\nconst DashboardPage: React.FC = () => {\n  return (\n    <Layout style={{ minHeight: '100vh' }}>\n      {/* 侧边栏 */}\n      <Sider width={240} theme=\"dark\">\n        <div style={{\n          height: 56,\n          display: 'flex',\n          alignItems: 'center',\n          justifyContent: 'center',\n          color: '#fff',\n          fontSize: 18,\n          fontWeight: 700,\n          borderBottom: '1px solid rgba(255,255,255,0.1)',\n        }}>\n          Boss Admin\n        </div>\n        <Menu\n          theme=\"dark\"\n          mode=\"inline\"\n          defaultSelectedKeys={['dashboard']}\n          items={menuItems}\n        />\n      </Sider>\n\n      <Layout>\n        {/* 顶栏 */}\n        <Header style={{\n          background: '#ffffff',\n          padding: '0 24px',\n          display: 'flex',\n          alignItems: 'center',\n          justifyContent: 'space-between',\n          borderBottom: '1px solid #f0f0f0',\n        }}>\n          <span style={{ fontSize: 16, fontWeight: 600 }}>工作台</span>\n          <Avatar icon={<UserOutlined />} />\n        </Header>\n\n        {/* 主内容 */}\n        <Content style={{ padding: 24, background: '#f5f5f5' }}>\n          {/* 统计卡片 */}\n          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 24 }}>\n            {stats.map((s, i) => (\n              <Card key={i} size=\"small\">\n                <Statistic\n                  title={s.title}\n                  value={s.value}\n                  prefix={s.prefix}\n                  suffix={s.suffix}\n                  valueStyle={{ color: i < 3 ? '#1677ff' : '#faad14', fontSize: 24 }}\n                />\n              </Card>\n            ))}\n          </div>\n\n          {/* 数据表格 */}\n          <Card title=\"最近订单\" size=\"small\">\n            <Table\n              columns={columns}\n              dataSource={data}\n              pagination={false}\n              size=\"small\"\n            />\n          </Card>\n        </Content>\n      </Layout>\n    </Layout>\n  );\n};\n\nexport default DashboardPage;\n",
+        "preview": "pattern-previews/boss-theme-blue/pages/dashboard.html"
+      }
+    ],
+    "components": [
+      {
+        "name": "stats-cards",
+        "file": "stats-cards.tsx",
+        "source": "/**\n * Boss 蓝色主题 - 统计卡片组件\n * 4列指标展示，使用 antd Statistic 组件\n * 使用 boss-theme-blue tokens：primary=#1677ff\n */\nimport React from 'react';\nimport 'antd/dist/antd.min.css';\nimport { Card, Statistic } from 'antd';\nimport { ArrowUpOutlined, ArrowDownOutlined } from '@ant-design/icons';\n\ninterface StatItem {\n  title: string;\n  value: number;\n  suffix?: string;\n  prefix?: string;\n  trend: number;\n  trendDirection: 'up' | 'down';\n}\n\ninterface StatsCardsProps {\n  items?: StatItem[];\n}\n\nconst defaultItems: StatItem[] = [\n  { title: '今日访客', value: 12483, suffix: '人', trend: 18.2, trendDirection: 'up' },\n  { title: '成交金额', value: 89420, prefix: '¥', trend: 6.5, trendDirection: 'up' },\n  { title: '退单率', value: 2.1, suffix: '%', trend: 0.8, trendDirection: 'down' },\n  { title: '平均响应', value: 1.2, suffix: 's', trend: 15, trendDirection: 'down' },\n];\n\nconst StatsCards: React.FC<StatsCardsProps> = ({ items = defaultItems }) => {\n  return (\n    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>\n      {items.map((item, i) => (\n        <Card key={i} size=\"small\">\n          <Statistic\n            title={item.title}\n            value={item.value}\n            prefix={item.prefix}\n            suffix={item.suffix}\n            valueStyle={{\n              color: item.trendDirection === 'up' ? '#52c41a' : '#ff4d4f',\n              fontSize: 24,\n            }}\n            prefix={item.trendDirection === 'up'\n              ? <ArrowUpOutlined />\n              : <ArrowDownOutlined />\n            }\n          />\n          <div style={{ fontSize: 13, color: item.trendDirection === 'up' ? '#52c41a' : '#ff4d4f', marginTop: 4 }}>\n            {item.trendDirection === 'up' ? '+' : '-'}{item.trend}%\n          </div>\n        </Card>\n      ))}\n    </div>\n  );\n};\n\nexport default StatsCards;\n",
+        "preview": "pattern-previews/boss-theme-blue/components/stats-cards.html"
+      }
+    ]
+  }
+}

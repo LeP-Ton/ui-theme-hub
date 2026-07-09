@@ -1,0 +1,137 @@
+{
+  "generatedAt": "2026-07-09T09:07:37.932Z",
+  "themes": [
+    {
+      "dir": "apple-theme",
+      "id": "apple-theme",
+      "name": "apple-theme",
+      "version": "1.0.0",
+      "description": "Apple 风格主题，简洁优雅，适合C端产品、营销落地页和移动端",
+      "author": "设计团队C",
+      "scene": "c-end",
+      "tags": [
+        "c-end",
+        "marketing",
+        "mobile",
+        "apple",
+        "elegant"
+      ],
+      "requires": [
+        {
+          "name": "tailwind",
+          "source": "https://github.com/tailwindlabs/tailwindcss"
+        }
+      ],
+      "previews": [],
+      "primaryColor": "#fa8c16",
+      "secondaryColor": "#faad14",
+      "accentColor": "#eb2f96",
+      "patternPages": [
+        "landing-page"
+      ],
+      "patternComponents": [
+        "feature-grid"
+      ]
+    },
+    {
+      "dir": "boss-theme-blue",
+      "id": "boss-theme-blue",
+      "name": "boss-theme-blue",
+      "version": "1.0.0",
+      "description": "Boss平台B端管理系统蓝色效能主题，专业科技感，适合企业级应用",
+      "author": "设计团队B",
+      "scene": "enterprise",
+      "tags": [
+        "management",
+        "enterprise",
+        "boss platform",
+        "blue"
+      ],
+      "requires": [
+        {
+          "name": "antd",
+          "source": "https://github.com/ant-design/ant-design"
+        }
+      ],
+      "previews": [],
+      "primaryColor": "#1677ff",
+      "secondaryColor": "#597ef7",
+      "accentColor": "#13c2c2",
+      "patternPages": [
+        "dashboard"
+      ],
+      "patternComponents": [
+        "stats-cards"
+      ]
+    },
+    {
+      "dir": "boss-theme-orange",
+      "id": "boss-theme-orange",
+      "name": "boss-theme-orange",
+      "version": "1.0.0",
+      "description": "Boss平台B端管理系统橙色业务主题，专业科技感，适合企业级应用",
+      "author": "设计团队B",
+      "scene": "enterprise",
+      "tags": [
+        "management",
+        "enterprise",
+        "boss platform",
+        "orange"
+      ],
+      "requires": [
+        {
+          "name": "antd",
+          "source": "https://github.com/ant-design/ant-design"
+        }
+      ],
+      "previews": [],
+      "primaryColor": "#ff6600",
+      "secondaryColor": "#ff8c3a",
+      "accentColor": "#ff4d00",
+      "patternPages": [
+        "list-page"
+      ],
+      "patternComponents": [
+        "form-section"
+      ]
+    },
+    {
+      "dir": "cyberpunk-theme",
+      "id": "cyberpunk-theme",
+      "name": "cyberpunk-theme",
+      "version": "1.0.0",
+      "description": "赛博朋克风格游戏UI主题，适合游戏界面和数据监控",
+      "author": "设计团队A",
+      "scene": "game",
+      "tags": [
+        "game",
+        "hud",
+        "cyberpunk"
+      ],
+      "requires": [
+        {
+          "name": "poem",
+          "source": "https://github.com/LeP-Ton/poem.git"
+        },
+        {
+          "name": "augmented-ui",
+          "source": "https://github.com/propjockey/augmented-ui"
+        }
+      ],
+      "previews": [
+        "theme-previews/cyberpunk-theme/image1.png",
+        "theme-previews/cyberpunk-theme/image2.png",
+        "theme-previews/cyberpunk-theme/image3.png"
+      ],
+      "primaryColor": "#177ddc",
+      "secondaryColor": "#531dab",
+      "accentColor": "#13c2c2",
+      "patternPages": [
+        "game-hud"
+      ],
+      "patternComponents": [
+        "character-panel"
+      ]
+    }
+  ]
+}

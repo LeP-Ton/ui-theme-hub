@@ -1,6 +1,7 @@
 # AgentDocs 索引
 
 ## 当前变更文档
+`workflow/20260706154000-split-index-two-layer.md` - themes-index.json 拆为两层：轻量索引 + 按需详情
 `workflow/260622172639-download-btn-style.md` - 下载按钮样式调整：纯文字风格 + 详情页同行右侧
 `workflow/260622164427-install-command-mac-entry.md` - 移除安装脚本，改为纯下载模式
 `workflow/260622100000-install-download-package.md` - 安装方式改为下载安装包（.command/.bat 双击即装）

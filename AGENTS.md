@@ -24,7 +24,9 @@ docs/
 ├── detail.html/js/css  # 主题详情页（tokens 可视化 + pattern 预览/源码切换）
 ├── pattern-previews/   # 编译后的 .tsx 预览 HTML（自动生成）
 ├── theme-previews/     # 主题截图（自动复制）
-└── themes-index.json   # 全量索引（自动生成）
+├── themes-summary.json # 轻量索引（自动生成，供列表页和 AI 场景识别）
+└── themes/             # 单主题全量 JSON（自动生成，供详情页按需加载）
+    └── {id}.json
 
 scripts/
 └── build-index.js      # 构建脚本：扫描主题 → 编译 tsx → 生成索引
@@ -34,7 +36,9 @@ scripts/
 1. `node scripts/build-index.js` 扫描所有含 `theme.json` 的目录
 2. 复制主题预览图到 `docs/theme-previews/`
 3. 编译 .tsx pattern 为独立 HTML（含 React 打包 + CSS 内联）到 `docs/pattern-previews/`
-4. 生成 `docs/themes-index.json`（含 tokens、patterns source/preview 路径）
+4. 生成 `docs/themes-summary.json`（轻量索引：仅含 scene/tags/description/主色等字段，供列表页和 AI 场景识别）
+5. 生成 `docs/themes/{id}.json`（单主题全量数据，供详情页按需加载）
+6. 原 `docs/themes-index.json` 已废弃
 
 ## CSS 处理机制
 CSS 由 .tsx 中的 import 驱动，esbuild css loader 自动提取到 out.css 并内联到 HTML：

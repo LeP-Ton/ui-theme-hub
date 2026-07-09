@@ -1,0 +1,165 @@
+{
+  "dir": "apple-theme",
+  "id": "apple-theme",
+  "name": "apple-theme",
+  "version": "1.0.0",
+  "description": "Apple 风格主题，简洁优雅，适合C端产品、营销落地页和移动端",
+  "author": "设计团队C",
+  "scene": "c-end",
+  "tags": [
+    "c-end",
+    "marketing",
+    "mobile",
+    "apple",
+    "elegant"
+  ],
+  "requires": [
+    {
+      "name": "tailwind",
+      "source": "https://github.com/tailwindlabs/tailwindcss"
+    }
+  ],
+  "tokens": {
+    "color": {
+      "primary": "#fa8c16",
+      "secondary": "#faad14",
+      "accent": "#eb2f96",
+      "success": "#52c41a",
+      "warning": "#faad14",
+      "error": "#ff4d4f",
+      "info": "#fa8c16",
+      "background": {
+        "base": "#ffffff",
+        "elevated": "#ffffff",
+        "muted": "#fff7e6"
+      },
+      "text": {
+        "primary": "rgba(0, 0, 0, 0.85)",
+        "secondary": "rgba(0, 0, 0, 0.65)",
+        "muted": "rgba(0, 0, 0, 0.45)",
+        "inverse": "#ffffff"
+      },
+      "border": {
+        "default": "#ffc069",
+        "muted": "#ffe7ba"
+      },
+      "extended": {
+        "heroGradientStart": "#fa8c16",
+        "heroGradientEnd": "#faad14",
+        "ctaBg": "#fa8c16",
+        "ctaHoverBg": "#d87a16"
+      }
+    },
+    "spacing": {
+      "unit": 4,
+      "scale": [
+        0,
+        4,
+        8,
+        12,
+        16,
+        20,
+        24,
+        32,
+        40,
+        48,
+        64,
+        80,
+        96
+      ],
+      "extended": {
+        "heroHeight": 400,
+        "sectionSpacing": 64,
+        "containerMaxWidth": 1200,
+        "containerPadding": 24,
+        "navHeight": 64,
+        "cardRadius": 12,
+        "touchTarget": 44,
+        "tabBarHeight": 50,
+        "safeAreaTop": "env(safe-area-inset-top)",
+        "safeAreaBottom": "env(safe-area-inset-bottom)"
+      }
+    },
+    "typography": {
+      "fontFamily": {
+        "base": "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+        "heading": "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+        "code": "'SF Mono', 'Fira Code', monospace"
+      },
+      "fontSize": {
+        "xs": 12,
+        "sm": 13,
+        "base": 14,
+        "lg": 16,
+        "xl": 20,
+        "2xl": 24,
+        "3xl": 30,
+        "4xl": 36
+      },
+      "fontWeight": {
+        "normal": 400,
+        "medium": 500,
+        "semibold": 600,
+        "bold": 700
+      },
+      "lineHeight": {
+        "tight": 1.25,
+        "base": 1.5,
+        "relaxed": 1.75
+      }
+    },
+    "border": {
+      "radius": {
+        "none": 0,
+        "sm": 6,
+        "base": 8,
+        "lg": 12,
+        "xl": 16,
+        "full": 9999
+      },
+      "width": {
+        "thin": 1,
+        "base": 1,
+        "thick": 2
+      }
+    },
+    "shadow": {
+      "sm": "0 2px 4px rgba(250, 140, 22, 0.06)",
+      "base": "0 2px 8px rgba(250, 140, 22, 0.08)",
+      "lg": "0 6px 16px rgba(250, 140, 22, 0.1)",
+      "xl": "0 9px 28px rgba(250, 140, 22, 0.12)"
+    },
+    "motion": {
+      "enabled": true,
+      "duration": {
+        "fast": "0.1s",
+        "base": "0.2s",
+        "slow": "0.3s"
+      },
+      "easing": {
+        "standard": "cubic-bezier(0.4,0,0.2,1)",
+        "decelerate": "cubic-bezier(0,0,0.2,1)",
+        "accelerate": "cubic-bezier(0.4,0,1,1)"
+      }
+    }
+  },
+  "previews": [],
+  "patterns": {
+    "pages": [
+      {
+        "name": "landing-page",
+        "file": "landing-page.tsx",
+        "source": "/**\n * Apple 风格落地页\n * 适用于 C 端产品营销，突出大标题 + CTA + 特性展示\n * 使用 apple-theme tokens：primary=#fa8c16, secondary=#faad14, accent=#eb2f96\n */\nimport React from 'react';\n\nconst LandingPage: React.FC = () => {\n  return (\n    <div style={styles.page}>\n      {/* 顶部导航栏 */}\n      <nav style={styles.nav}>\n        <span style={styles.logo}>MyApp</span>\n        <div style={styles.navLinks}>\n          <a style={styles.navLink}>功能</a>\n          <a style={styles.navLink}>定价</a>\n          <a style={styles.navLink}>关于</a>\n          <button style={styles.navCta}>立即体验</button>\n        </div>\n      </nav>\n\n      {/* 英雄区：大标题 + 副标题 + CTA */}\n      <section style={styles.hero}>\n        <h1 style={styles.heroTitle}>\n          让创意<span style={styles.highlight}>触手可及</span>\n        </h1>\n        <p style={styles.heroSubtitle}>\n          简洁、优雅、强大。为每一位创作者打造的最佳体验。\n        </p>\n        <div style={styles.ctaGroup}>\n          <button style={styles.ctaPrimary}>免费开始</button>\n          <button style={styles.ctaSecondary}>了解更多</button>\n        </div>\n      </section>\n\n      {/* 特性卡片区域 */}\n      <section style={styles.features}>\n        <h2 style={styles.sectionTitle}>核心特性</h2>\n        <div style={styles.featureGrid}>\n          {[\n            { icon: '⚡', title: '极速体验', desc: '毫秒级响应，流畅无卡顿' },\n            { icon: '🎨', title: '精美设计', desc: '每一个像素都经过精心打磨' },\n            { icon: '🔒', title: '安全可靠', desc: '企业级安全，数据加密存储' },\n          ].map((f, i) => (\n            <div key={i} style={styles.featureCard}>\n              <span style={styles.featureIcon}>{f.icon}</span>\n              <h3 style={styles.featureTitle}>{f.title}</h3>\n              <p style={styles.featureDesc}>{f.desc}</p>\n            </div>\n          ))}\n        </div>\n      </section>\n\n      {/* 页脚 */}\n      <footer style={styles.footer}>\n        <span>© 2026 MyApp. All rights reserved.</span>\n      </footer>\n    </div>\n  );\n};\n\n/* 内联样式，使用 apple-theme token 值 */\nconst styles: Record<string, React.CSSProperties> = {\n  page: {\n    fontFamily: \"-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\",\n    background: '#ffffff',\n    color: 'rgba(0, 0, 0, 0.85)',\n    minHeight: '100vh',\n  },\n  nav: {\n    display: 'flex',\n    alignItems: 'center',\n    justifyContent: 'space-between',\n    padding: '0 24px',\n    height: 64,\n    borderBottom: '1px solid #ffe7ba',\n  },\n  logo: {\n    fontSize: 20,\n    fontWeight: 700,\n    color: '#fa8c16',\n  },\n  navLinks: {\n    display: 'flex',\n    alignItems: 'center',\n    gap: 24,\n  },\n  navLink: {\n    fontSize: 14,\n    color: 'rgba(0, 0, 0, 0.65)',\n    cursor: 'pointer',\n  },\n  navCta: {\n    padding: '6px 16px',\n    borderRadius: 8,\n    border: 'none',\n    background: '#fa8c16',\n    color: '#ffffff',\n    fontSize: 14,\n    fontWeight: 600,\n    cursor: 'pointer',\n  },\n  hero: {\n    textAlign: 'center' as const,\n    padding: '80px 24px 64px',\n    background: 'linear-gradient(135deg, #fa8c1611 0%, #faad1411 50%, #eb2f9611 100%)',\n  },\n  heroTitle: {\n    fontSize: 48,\n    fontWeight: 700,\n    lineHeight: 1.25,\n    marginBottom: 16,\n    letterSpacing: '-0.02em',\n  },\n  highlight: {\n    color: '#fa8c16',\n  },\n  heroSubtitle: {\n    fontSize: 18,\n    color: 'rgba(0, 0, 0, 0.65)',\n    lineHeight: 1.75,\n    marginBottom: 32,\n  },\n  ctaGroup: {\n    display: 'flex',\n    justifyContent: 'center',\n    gap: 16,\n  },\n  ctaPrimary: {\n    padding: '12px 32px',\n    borderRadius: 12,\n    border: 'none',\n    background: '#fa8c16',\n    color: '#ffffff',\n    fontSize: 16,\n    fontWeight: 600,\n    cursor: 'pointer',\n  },\n  ctaSecondary: {\n    padding: '12px 32px',\n    borderRadius: 12,\n    border: '1px solid #ffc069',\n    background: 'transparent',\n    color: '#fa8c16',\n    fontSize: 16,\n    fontWeight: 600,\n    cursor: 'pointer',\n  },\n  features: {\n    maxWidth: 1200,\n    margin: '0 auto',\n    padding: '64px 24px',\n  },\n  sectionTitle: {\n    textAlign: 'center' as const,\n    fontSize: 30,\n    fontWeight: 700,\n    marginBottom: 40,\n  },\n  featureGrid: {\n    display: 'grid',\n    gridTemplateColumns: 'repeat(3, 1fr)',\n    gap: 24,\n  },\n  featureCard: {\n    padding: 32,\n    borderRadius: 12,\n    border: '1px solid #ffe7ba',\n    background: '#fff7e6',\n    textAlign: 'center' as const,\n  },\n  featureIcon: {\n    fontSize: 36,\n    display: 'block',\n    marginBottom: 16,\n  },\n  featureTitle: {\n    fontSize: 20,\n    fontWeight: 600,\n    marginBottom: 8,\n  },\n  featureDesc: {\n    fontSize: 14,\n    color: 'rgba(0, 0, 0, 0.65)',\n    lineHeight: 1.5,\n  },\n  footer: {\n    textAlign: 'center' as const,\n    padding: '24px',\n    color: 'rgba(0, 0, 0, 0.45)',\n    fontSize: 13,\n    borderTop: '1px solid #ffe7ba',\n  },\n};\n\nexport default LandingPage;\n",
+        "preview": "pattern-previews/apple-theme/pages/landing-page.html"
+      }
+    ],
+    "components": [
+      {
+        "name": "feature-grid",
+        "file": "feature-grid.tsx",
+        "source": "/**\n * Apple 风格特性网格组件\n * 3列特性展示卡片，适用于落地页和产品介绍页\n * 使用 apple-theme tokens\n */\nimport React from 'react';\n\ninterface FeatureItem {\n  icon: string;\n  title: string;\n  description: string;\n}\n\ninterface FeatureGridProps {\n  features?: FeatureItem[];\n}\n\nconst defaultFeatures: FeatureItem[] = [\n  { icon: '🚀', title: '高性能', description: '极致的加载速度与响应体验' },\n  { icon: '🎯', title: '精准定位', description: '智能推荐，直达用户所需' },\n  { icon: '🌐', title: '全球覆盖', description: '多语言多区域无缝接入' },\n  { icon: '📊', title: '数据洞察', description: '实时可视化运营数据' },\n  { icon: '🤝', title: '开放生态', description: '丰富的 API 与插件市场' },\n  { icon: '🛡️', title: '隐私保护', description: '端到端加密，数据自主可控' },\n];\n\nconst FeatureGrid: React.FC<FeatureGridProps> = ({ features = defaultFeatures }) => {\n  return (\n    <div style={styles.grid}>\n      {features.map((f, i) => (\n        <div key={i} style={styles.card}>\n          <span style={styles.icon}>{f.icon}</span>\n          <h3 style={styles.title}>{f.title}</h3>\n          <p style={styles.desc}>{f.description}</p>\n        </div>\n      ))}\n    </div>\n  );\n};\n\nconst styles: Record<string, React.CSSProperties> = {\n  grid: {\n    display: 'grid',\n    gridTemplateColumns: 'repeat(3, 1fr)',\n    gap: 16,\n    padding: 24,\n    fontFamily: \"-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif\",\n  },\n  card: {\n    padding: '24px 20px',\n    borderRadius: 12,\n    border: '1px solid #ffe7ba',\n    background: '#fffbf0',\n    textAlign: 'center' as const,\n    transition: 'box-shadow 0.2s',\n  },\n  icon: {\n    fontSize: 28,\n    display: 'block',\n    marginBottom: 12,\n  },\n  title: {\n    fontSize: 16,\n    fontWeight: 600,\n    color: 'rgba(0, 0, 0, 0.85)',\n    marginBottom: 6,\n  },\n  desc: {\n    fontSize: 13,\n    color: 'rgba(0, 0, 0, 0.65)',\n    lineHeight: 1.5,\n    margin: 0,\n  },\n};\n\nexport default FeatureGrid;\n",
+        "preview": "pattern-previews/apple-theme/components/feature-grid.html"
+      }
+    ]
+  }
+}

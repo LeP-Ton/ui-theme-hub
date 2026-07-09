@@ -15,7 +15,7 @@
 
   /* ========== 状态管理 ========== */
   const state = {
-    themes: [],          /* 全量主题数据 */
+    themes: [],          /* 轻量主题数据（来自 themes-summary.json） */
     activeScene: null,   /* 当前选中的 scene，null 表示全部 */
     activeTags: new Set(), /* 当前选中的 tag 集合 */
     searchQuery: '',     /* 搜索关键字（原始输入） */
@@ -32,7 +32,7 @@
   /* ========== 初始化 ========== */
   async function init() {
     try {
-      const res = await fetch('./themes-index.json');
+      const res = await fetch('./themes-summary.json');
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
       state.themes = data.themes || [];
@@ -229,10 +229,9 @@
     const themeId = theme.id || theme.dir;
     const isInstalled = state.installedIds.has(themeId);
 
-    const colors = theme.tokens?.color || {};
-    const primary = colors.primary || '#6366f1';
-    const secondary = colors.secondary || '#818cf8';
-    const accent = colors.accent || '#a78bfa';
+    const primary = theme.primaryColor || '#6366f1';
+    const secondary = theme.secondaryColor || '#818cf8';
+    const accent = theme.accentColor || '#a78bfa';
 
     /* 预览区域 */
     const preview = theme.previews.length > 0

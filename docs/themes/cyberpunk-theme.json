@@ -1,0 +1,174 @@
+{
+  "dir": "cyberpunk-theme",
+  "id": "cyberpunk-theme",
+  "name": "cyberpunk-theme",
+  "version": "1.0.0",
+  "description": "赛博朋克风格游戏UI主题，适合游戏界面和数据监控",
+  "author": "设计团队A",
+  "scene": "game",
+  "tags": [
+    "game",
+    "hud",
+    "cyberpunk"
+  ],
+  "requires": [
+    {
+      "name": "poem",
+      "source": "https://github.com/LeP-Ton/poem.git"
+    },
+    {
+      "name": "augmented-ui",
+      "source": "https://github.com/propjockey/augmented-ui"
+    }
+  ],
+  "tokens": {
+    "color": {
+      "primary": "#177ddc",
+      "secondary": "#531dab",
+      "accent": "#13c2c2",
+      "success": "#49aa19",
+      "warning": "#d89614",
+      "error": "#d9363e",
+      "info": "#177ddc",
+      "background": {
+        "base": "#141414",
+        "elevated": "#1f1f1f",
+        "muted": "#000000"
+      },
+      "text": {
+        "primary": "rgba(255, 255, 255, 0.85)",
+        "secondary": "rgba(255, 255, 255, 0.65)",
+        "muted": "rgba(255, 255, 255, 0.45)",
+        "inverse": "rgba(0, 0, 0, 0.88)"
+      },
+      "border": {
+        "default": "#434343",
+        "muted": "#303030"
+      },
+      "extended": {
+        "rarityCommon": "#ffffff",
+        "rarityUncommon": "#1eff00",
+        "rarityRare": "#0070ff",
+        "rarityEpic": "#a335ee",
+        "rarityLegendary": "#ff8000",
+        "healthBar": "#ff4d4f",
+        "manaBar": "#1677ff",
+        "xpBar": "#d89614"
+      }
+    },
+    "spacing": {
+      "unit": 4,
+      "scale": [
+        0,
+        4,
+        8,
+        12,
+        16,
+        20,
+        24,
+        32,
+        40,
+        48,
+        64,
+        80,
+        96
+      ],
+      "extended": {
+        "hudTopHeight": 48,
+        "hudBottomHeight": 56,
+        "sidePanelWidth": 280,
+        "skillSlotSize": 56,
+        "skillSlotGap": 4,
+        "inventoryGridSize": 64,
+        "inventoryGridGap": 4,
+        "healthBarHeight": 12,
+        "manaBarHeight": 8
+      }
+    },
+    "typography": {
+      "fontFamily": {
+        "base": "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+        "heading": "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+        "code": "'SF Mono', 'Fira Code', monospace"
+      },
+      "fontSize": {
+        "xs": 12,
+        "sm": 13,
+        "base": 14,
+        "lg": 16,
+        "xl": 20,
+        "2xl": 24,
+        "3xl": 30,
+        "4xl": 36
+      },
+      "fontWeight": {
+        "normal": 400,
+        "medium": 500,
+        "semibold": 600,
+        "bold": 700
+      },
+      "lineHeight": {
+        "tight": 1.25,
+        "base": 1.5,
+        "relaxed": 1.75
+      }
+    },
+    "border": {
+      "radius": {
+        "none": 0,
+        "sm": 4,
+        "base": 6,
+        "lg": 8,
+        "xl": 12,
+        "full": 9999
+      },
+      "width": {
+        "thin": 1,
+        "base": 1,
+        "thick": 2
+      }
+    },
+    "shadow": {
+      "sm": "0 1px 2px rgba(0, 0, 0, 0.3)",
+      "base": "0 2px 8px rgba(0, 0, 0, 0.45)",
+      "lg": "0 6px 16px rgba(0, 0, 0, 0.55)",
+      "xl": "0 9px 28px rgba(0, 0, 0, 0.6)"
+    },
+    "motion": {
+      "enabled": true,
+      "duration": {
+        "fast": "0.1s",
+        "base": "0.2s",
+        "slow": "0.3s"
+      },
+      "easing": {
+        "standard": "cubic-bezier(0.4,0,0.2,1)",
+        "decelerate": "cubic-bezier(0,0,0.2,1)",
+        "accelerate": "cubic-bezier(0.4,0,1,1)"
+      }
+    }
+  },
+  "previews": [
+    "theme-previews/cyberpunk-theme/image1.png",
+    "theme-previews/cyberpunk-theme/image2.png",
+    "theme-previews/cyberpunk-theme/image3.png"
+  ],
+  "patterns": {
+    "pages": [
+      {
+        "name": "game-hud",
+        "file": "game-hud.tsx",
+        "source": "/**\n * 赛博朋克主题 - 游戏 HUD 页面\n * 全屏游戏 HUD 布局：顶部状态条 + 右下小地图 + 底部技能栏\n * 使用 cyberpunk-theme tokens：primary=#177ddc, dark bg=#141414/#1f1f1f\n */\nimport React, { useState } from 'react';\n\nconst GameHUDPage: React.FC = () => {\n  const [hp] = useState(85);\n  const [mp] = useState(60);\n\n  return (\n    <div style={styles.hud}>\n      {/* 顶部状态栏 */}\n      <header style={styles.topBar}>\n        <div style={styles.barsContainer}>\n          {/* HP 条 */}\n          <div style={styles.barRow}>\n            <span style={styles.barLabel}>HP</span>\n            <div style={styles.barTrack}>\n              <div style={{ ...styles.barFill, width: `${hp}%`, background: 'linear-gradient(90deg, #ff4d4f, #ff7875)' }} />\n            </div>\n            <span style={styles.barText}>{hp}/100</span>\n          </div>\n          {/* MP 条 */}\n          <div style={styles.barRow}>\n            <span style={styles.barLabel}>MP</span>\n            <div style={styles.barTrack}>\n              <div style={{ ...styles.barFill, width: `${mp}%`, background: 'linear-gradient(90deg, #177ddc, #69b1ff)' }} />\n            </div>\n            <span style={styles.barText}>{mp}/100</span>\n          </div>\n        </div>\n        <div style={styles.levelBadge}>Lv.42</div>\n      </header>\n\n      {/* 中央游戏画面占位 */}\n      <div style={styles.gameArea}>\n        <span style={styles.gameAreaText}>游戏画面区域</span>\n      </div>\n\n      {/* 右下角小地图 */}\n      <div style={styles.minimap}>\n        <div style={styles.minimapBorder}>小地图</div>\n      </div>\n\n      {/* 底部技能栏 */}\n      <footer style={styles.bottomBar}>\n        <div style={styles.skillBar}>\n          {[\n            { key: 'Q', name: '斩击', rarity: 'rare' },\n            { key: 'W', name: '闪避', rarity: 'common' },\n            { key: 'E', name: '火球', rarity: 'epic' },\n            { key: 'R', name: '终极', rarity: 'legendary' },\n            { key: 'T', name: '治疗', rarity: 'uncommon' },\n          ].map((skill, i) => (\n            <div\n              key={skill.key}\n              style={{\n                ...styles.skillSlot,\n                borderColor: rarityColor[skill.rarity],\n                boxShadow: `0 0 8px ${rarityColor[skill.rarity]}40`,\n              }}\n            >\n              <span style={styles.skillName}>{skill.name}</span>\n              <span style={styles.skillKey}>{skill.key}</span>\n            </div>\n          ))}\n        </div>\n        <div style={styles.quickActions}>\n          <div style={styles.currency}>💰 12,480</div>\n          <button style={styles.actionBtn}>🎒</button>\n          <button style={styles.actionBtn}>⚙️</button>\n        </div>\n      </footer>\n    </div>\n  );\n};\n\n/* 稀有度颜色映射 */\nconst rarityColor: Record<string, string> = {\n  common: '#ffffff',\n  uncommon: '#1eff00',\n  rare: '#0070ff',\n  epic: '#a335ee',\n  legendary: '#ff8000',\n};\n\nconst styles: Record<string, React.CSSProperties> = {\n  hud: {\n    position: 'relative',\n    width: '100%',\n    height: '100vh',\n    background: '#141414',\n    color: 'rgba(255, 255, 255, 0.85)',\n    fontFamily: \"-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif\",\n    overflow: 'hidden',\n    display: 'flex',\n    flexDirection: 'column' as const,\n  },\n  topBar: {\n    display: 'flex',\n    alignItems: 'center',\n    justifyContent: 'space-between',\n    padding: '12px 20px',\n    background: 'rgba(0, 0, 0, 0.6)',\n    backdropFilter: 'blur(8px)',\n    borderBottom: '1px solid #434343',\n    zIndex: 10,\n  },\n  barsContainer: {\n    display: 'flex',\n    flexDirection: 'column' as const,\n    gap: 6,\n  },\n  barRow: {\n    display: 'flex',\n    alignItems: 'center',\n    gap: 8,\n  },\n  barLabel: {\n    fontSize: 11,\n    fontWeight: 700,\n    width: 24,\n    color: 'rgba(255, 255, 255, 0.65)',\n  },\n  barTrack: {\n    width: 200,\n    height: 10,\n    borderRadius: 5,\n    background: 'rgba(255, 255, 255, 0.1)',\n    overflow: 'hidden',\n  },\n  barFill: {\n    height: '100%',\n    borderRadius: 5,\n    transition: 'width 0.3s ease',\n  },\n  barText: {\n    fontSize: 11,\n    fontFamily: \"'SF Mono', 'Fira Code', monospace\",\n    color: 'rgba(255, 255, 255, 0.65)',\n  },\n  levelBadge: {\n    padding: '4px 14px',\n    borderRadius: 4,\n    background: 'linear-gradient(135deg, #531dab, #177ddc)',\n    fontSize: 14,\n    fontWeight: 700,\n    border: '1px solid #13c2c2',\n  },\n  gameArea: {\n    flex: 1,\n    display: 'flex',\n    alignItems: 'center',\n    justifyContent: 'center',\n  },\n  gameAreaText: {\n    fontSize: 24,\n    color: 'rgba(255, 255, 255, 0.2)',\n    letterSpacing: '0.1em',\n  },\n  minimap: {\n    position: 'absolute' as const,\n    right: 20,\n    bottom: 80,\n    width: 160,\n    height: 160,\n  },\n  minimapBorder: {\n    width: '100%',\n    height: '100%',\n    borderRadius: 4,\n    border: '2px solid #434343',\n    background: 'rgba(0, 0, 0, 0.5)',\n    display: 'flex',\n    alignItems: 'center',\n    justifyContent: 'center',\n    fontSize: 13,\n    color: 'rgba(255, 255, 255, 0.45)',\n  },\n  bottomBar: {\n    display: 'flex',\n    alignItems: 'center',\n    justifyContent: 'space-between',\n    padding: '12px 20px',\n    background: 'rgba(0, 0, 0, 0.6)',\n    backdropFilter: 'blur(8px)',\n    borderTop: '1px solid #434343',\n  },\n  skillBar: {\n    display: 'flex',\n    gap: 6,\n  },\n  skillSlot: {\n    width: 56,\n    height: 56,\n    borderRadius: 6,\n    border: '2px solid #434343',\n    background: 'rgba(0, 0, 0, 0.6)',\n    display: 'flex',\n    flexDirection: 'column' as const,\n    alignItems: 'center',\n    justifyContent: 'center',\n    gap: 2,\n  },\n  skillName: {\n    fontSize: 11,\n    color: 'rgba(255, 255, 255, 0.85)',\n  },\n  skillKey: {\n    fontSize: 10,\n    fontWeight: 700,\n    color: 'rgba(255, 255, 255, 0.45)',\n    fontFamily: \"'SF Mono', 'Fira Code', monospace\",\n  },\n  quickActions: {\n    display: 'flex',\n    alignItems: 'center',\n    gap: 12,\n  },\n  currency: {\n    fontSize: 14,\n    fontWeight: 600,\n    fontFamily: \"'SF Mono', 'Fira Code', monospace\",\n    color: '#d89614',\n  },\n  actionBtn: {\n    width: 40,\n    height: 40,\n    borderRadius: 6,\n    border: '1px solid #434343',\n    background: 'rgba(0, 0, 0, 0.5)',\n    fontSize: 18,\n    cursor: 'pointer',\n    display: 'flex',\n    alignItems: 'center',\n    justifyContent: 'center',\n  },\n};\n\nexport default GameHUDPage;\n",
+        "preview": "pattern-previews/cyberpunk-theme/pages/game-hud.html"
+      }
+    ],
+    "components": [
+      {
+        "name": "character-panel",
+        "file": "character-panel.tsx",
+        "source": "/**\n * 赛博朋克主题 - 角色信息面板组件\n * 游戏内角色属性展示，含头像框、属性条、装备槽\n * 使用 cyberpunk-theme tokens：rarity 系列颜色\n */\nimport React from 'react';\n\ninterface AttrBar {\n  label: string;\n  current: number;\n  max: number;\n  color: string;\n}\n\ninterface EquipmentSlot {\n  name: string;\n  rarity: 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary';\n}\n\nconst rarityColors: Record<string, string> = {\n  common: '#ffffff',\n  uncommon: '#1eff00',\n  rare: '#0070ff',\n  epic: '#a335ee',\n  legendary: '#ff8000',\n};\n\nconst attrs: AttrBar[] = [\n  { label: '力量', current: 78, max: 100, color: '#ff4d4f' },\n  { label: '敏捷', current: 92, max: 100, color: '#1eff00' },\n  { label: '智力', current: 45, max: 100, color: '#0070ff' },\n  { label: '精神', current: 63, max: 100, color: '#a335ee' },\n];\n\nconst equipments: EquipmentSlot[] = [\n  { name: '龙鳞战甲', rarity: 'legendary' },\n  { name: '暗影之刃', rarity: 'epic' },\n  { name: '守护之盾', rarity: 'rare' },\n  { name: '疾风之靴', rarity: 'uncommon' },\n];\n\nconst CharacterPanel: React.FC = () => {\n  return (\n    <div style={styles.panel}>\n      {/* 角色头像与基本信息 */}\n      <div style={styles.header}>\n        <div style={styles.avatar}>\n          <span style={styles.avatarText}>42</span>\n        </div>\n        <div style={styles.headerInfo}>\n          <div style={styles.charName}>暗影行者</div>\n          <div style={styles.charClass}>刺客 · Lv.42</div>\n        </div>\n      </div>\n\n      {/* 属性条 */}\n      <div style={styles.section}>\n        <div style={styles.sectionTitle}>属性</div>\n        {attrs.map(attr => (\n          <div key={attr.label} style={styles.attrRow}>\n            <span style={styles.attrLabel}>{attr.label}</span>\n            <div style={styles.attrTrack}>\n              <div style={{\n                ...styles.attrFill,\n                width: `${(attr.current / attr.max) * 100}%`,\n                background: attr.color,\n              }} />\n            </div>\n            <span style={styles.attrValue}>{attr.current}</span>\n          </div>\n        ))}\n      </div>\n\n      {/* 装备槽 */}\n      <div style={styles.section}>\n        <div style={styles.sectionTitle}>装备</div>\n        {equipments.map((eq, i) => (\n          <div key={i} style={{\n            ...styles.equipSlot,\n            borderColor: rarityColors[eq.rarity],\n            boxShadow: `inset 0 0 12px ${rarityColors[eq.rarity]}15, 0 0 6px ${rarityColors[eq.rarity]}30`,\n          }}>\n            <span style={{\n              ...styles.equipName,\n              color: rarityColors[eq.rarity],\n            }}>\n              {eq.name}\n            </span>\n            <span style={styles.equipRarity}>{eq.rarity.toUpperCase()}</span>\n          </div>\n        ))}\n      </div>\n    </div>\n  );\n};\n\nconst styles: Record<string, React.CSSProperties> = {\n  panel: {\n    width: 280,\n    background: '#1f1f1f',\n    border: '1px solid #434343',\n    borderRadius: 6,\n    padding: 16,\n    color: 'rgba(255, 255, 255, 0.85)',\n    fontFamily: \"-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif\",\n    fontSize: 13,\n  },\n  header: {\n    display: 'flex',\n    alignItems: 'center',\n    gap: 12,\n    paddingBottom: 12,\n    borderBottom: '1px solid #303030',\n    marginBottom: 12,\n  },\n  avatar: {\n    width: 48,\n    height: 48,\n    borderRadius: 6,\n    border: '2px solid #0070ff',\n    background: 'linear-gradient(135deg, #531dab, #177ddc)',\n    display: 'flex',\n    alignItems: 'center',\n    justifyContent: 'center',\n    boxShadow: '0 0 12px #0070ff30',\n  },\n  avatarText: {\n    fontSize: 18,\n    fontWeight: 700,\n  },\n  headerInfo: {},\n  charName: {\n    fontSize: 16,\n    fontWeight: 700,\n    marginBottom: 2,\n  },\n  charClass: {\n    fontSize: 12,\n    color: 'rgba(255, 255, 255, 0.45)',\n  },\n  section: {\n    marginBottom: 12,\n  },\n  sectionTitle: {\n    fontSize: 12,\n    fontWeight: 600,\n    color: 'rgba(255, 255, 255, 0.45)',\n    textTransform: 'uppercase' as const,\n    letterSpacing: '0.05em',\n    marginBottom: 8,\n  },\n  attrRow: {\n    display: 'flex',\n    alignItems: 'center',\n    gap: 8,\n    marginBottom: 6,\n  },\n  attrLabel: {\n    width: 32,\n    fontSize: 12,\n    color: 'rgba(255, 255, 255, 0.65)',\n  },\n  attrTrack: {\n    flex: 1,\n    height: 6,\n    borderRadius: 3,\n    background: 'rgba(255, 255, 255, 0.1)',\n    overflow: 'hidden',\n  },\n  attrFill: {\n    height: '100%',\n    borderRadius: 3,\n    transition: 'width 0.3s',\n  },\n  attrValue: {\n    width: 24,\n    textAlign: 'right' as const,\n    fontSize: 12,\n    fontFamily: \"'SF Mono', 'Fira Code', monospace\",\n    color: 'rgba(255, 255, 255, 0.65)',\n  },\n  equipSlot: {\n    display: 'flex',\n    alignItems: 'center',\n    justifyContent: 'space-between',\n    padding: '8px 12px',\n    borderRadius: 4,\n    border: '1px solid #434343',\n    background: 'rgba(0, 0, 0, 0.3)',\n    marginBottom: 6,\n  },\n  equipName: {\n    fontSize: 13,\n    fontWeight: 600,\n  },\n  equipRarity: {\n    fontSize: 10,\n    fontFamily: \"'SF Mono', 'Fira Code', monospace\",\n    color: 'rgba(255, 255, 255, 0.45)',\n  },\n};\n\nexport default CharacterPanel;\n",
+        "preview": "pattern-previews/cyberpunk-theme/components/character-panel.html"
+      }
+    ]
+  }
+}
