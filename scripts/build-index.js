@@ -101,10 +101,78 @@ ${cssCode}
   }
 }
 
+/* ========== 主题格式校验 ========== */
+
+/**
+ * 校验 theme.json 必填字段与类型
+ * 返回 { valid, errors, warnings }
+ * - errors: 严重问题，阻止该主题入库
+ * - warnings: 警告问题，允许入库但输出提示
+ */
+function validateTheme(themeData, dirName) {
+  const errors = [];
+  const warnings = [];
+
+  /* 必填字段 */
+  const requiredFields = ['name', 'version', 'description', 'author', 'scene', 'tags'];
+  for (const field of requiredFields) {
+    if (themeData[field] == null) {
+      errors.push(`缺少必填字段: ${field}`);
+    }
+  }
+
+  /* 类型校验 */
+  if (themeData.name != null && typeof themeData.name !== 'string') {
+    errors.push('name 必须为字符串');
+  }
+  if (themeData.version != null && typeof themeData.version !== 'string') {
+    errors.push('version 必须为字符串');
+  }
+  if (themeData.scene != null && typeof themeData.scene !== 'string') {
+    errors.push('scene 必须为字符串');
+  }
+  if (themeData.tags != null && !Array.isArray(themeData.tags)) {
+    errors.push('tags 必须为数组');
+  }
+  if (themeData.requires != null && !Array.isArray(themeData.requires)) {
+    errors.push('requires 必须为数组');
+  }
+
+  /* 已废弃字段检测 */
+  if ('id' in themeData) {
+    warnings.push('id 字段已废弃，主题标识统一使用目录名（dir），请删除 id 字段');
+  }
+
+  /* tokens 结构建议 */
+  if (!themeData.tokens) {
+    warnings.push('缺少 tokens，详情页将无设计令牌展示');
+  } else {
+    if (!themeData.tokens.color) warnings.push('缺少 tokens.color，列表页色彩 fallback 将使用默认值');
+    if (!themeData.tokens.spacing) warnings.push('缺少 tokens.spacing');
+    if (!themeData.tokens.typography) warnings.push('缺少 tokens.typography');
+  }
+
+  /* patterns 目录检测 */
+  const patternsDir = path.join(REPO_ROOT, dirName, 'patterns');
+  if (!fs.existsSync(patternsDir)) {
+    warnings.push('缺少 patterns 目录，该主题将无任何模式预览');
+  } else {
+    const pagesDir = path.join(patternsDir, 'pages');
+    if (!fs.existsSync(pagesDir) || fs.readdirSync(pagesDir).filter(f => f.endsWith('.tsx')).length === 0) {
+      warnings.push('patterns/pages 下无 .tsx 文件，建议至少提供 1 个页面模板');
+    }
+  }
+
+  return { valid: errors.length === 0, errors, warnings };
+}
+
 /* ========== 主流程 ========== */
 
 const entries = fs.readdirSync(REPO_ROOT, { withFileTypes: true });
 const themes = [];
+/* 唯一性检测集合 */
+const seenNames = new Map();   /* name → dir，检测 name 重复 */
+const seenDirs = new Set();    /* dir 集合，检测目录名重复（理论上不可能，防御性编程） */
 
 async function main() {
   for (const entry of entries) {
@@ -115,7 +183,36 @@ async function main() {
     const themeJsonPath = path.join(REPO_ROOT, entry.name, 'theme.json');
     if (!fs.existsSync(themeJsonPath)) continue;
 
+    /* 目录名唯一性 */
+    if (seenDirs.has(entry.name)) {
+      console.error(`  ✗ 目录名重复: ${entry.name}，跳过`);
+      continue;
+    }
+    seenDirs.add(entry.name);
+
     const themeData = JSON.parse(fs.readFileSync(themeJsonPath, 'utf-8'));
+
+    /* 格式校验 */
+    const validation = validateTheme(themeData, entry.name);
+    if (validation.errors.length > 0) {
+      console.error(`\n🚫 主题 ${entry.name} 校验失败:`);
+      validation.errors.forEach(e => console.error(`   ✗ ${e}`));
+      continue; /* 校验不通过，跳过该主题 */
+    }
+    if (validation.warnings.length > 0) {
+      console.warn(`\n⚠️  主题 ${entry.name} 存在警告:`);
+      validation.warnings.forEach(w => console.warn(`   ⚠ ${w}`));
+    }
+
+    /* name 唯一性校验 */
+    if (themeData.name) {
+      if (seenNames.has(themeData.name)) {
+        console.error(`\n🚫 主题 name 重复: "${themeData.name}" 同时出现在 ${seenNames.get(themeData.name)} 和 ${entry.name}，跳过 ${entry.name}`);
+        continue;
+      }
+      seenNames.set(themeData.name, entry.name);
+    }
+
     console.log(`\n📦 处理主题: ${themeData.name}`);
 
     /* 扫描预览图片 */
@@ -189,7 +286,6 @@ async function main() {
   /* ========== 生成 themes-summary.json（轻量索引，供列表页和 AI 场景识别） ========== */
   const summary = themes.map(t => ({
     dir: t.dir,
-    id: t.id || t.dir,
     name: t.name,
     version: t.version,
     description: t.description,
@@ -220,7 +316,7 @@ async function main() {
   fs.mkdirSync(DETAILS_DIR, { recursive: true });
 
   for (const theme of themes) {
-    const themeId = theme.id || theme.dir;
+    const themeId = theme.dir;
     const detailPath = path.join(DETAILS_DIR, `${themeId}.json`);
     fs.writeFileSync(detailPath, JSON.stringify(theme, null, 2) + '\n');
   }
@@ -239,7 +335,7 @@ async function main() {
   fs.mkdirSync(PACKAGES_DIR, { recursive: true });
 
   for (const theme of themes) {
-    const themeId = theme.id || theme.dir;
+    const themeId = theme.dir;
     const themeDir = path.join(REPO_ROOT, theme.dir);
     const tmpDir = path.join(REPO_ROOT, '.tmp-package', themeId);
 

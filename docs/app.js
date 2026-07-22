@@ -190,7 +190,7 @@
         const query = state.searchQuery.toLowerCase();
         const haystack = [
           theme.name,
-          theme.id || theme.dir,
+          theme.dir,
           theme.description,
           theme.author,
           theme.scene,
@@ -204,8 +204,8 @@
 
     /* 排序：已下载主题排在前面 */
     filtered.sort((a, b) => {
-      const aInstalled = state.installedIds.has(a.id || a.dir) ? 0 : 1;
-      const bInstalled = state.installedIds.has(b.id || b.dir) ? 0 : 1;
+      const aInstalled = state.installedIds.has(a.dir) ? 0 : 1;
+      const bInstalled = state.installedIds.has(b.dir) ? 0 : 1;
       return aInstalled - bInstalled;
     });
 
@@ -226,7 +226,7 @@
 
   /* 渲染单个卡片 */
   function renderCard(theme) {
-    const themeId = theme.id || theme.dir;
+    const themeId = theme.dir;
     const isInstalled = state.installedIds.has(themeId);
 
     const primary = theme.primaryColor || '#6366f1';

@@ -95,7 +95,7 @@
             <h1 class="detail-name">${escapeHTML(theme.name)}</h1>
             <span class="detail-version">v${escapeHTML(theme.version)}</span>
             ${isInstalled ? '<span class="detail-installed-badge">已下载</span>' : ''}
-            <button class="detail-install-btn" data-theme-id="${escapeHTML(theme.id || theme.dir)}">⬇ 下载主题</button>
+            <button class="detail-install-btn" data-theme-id="${escapeHTML(theme.dir)}">⬇ 下载主题</button>
           </div>
           <p class="detail-desc">${escapeHTML(theme.description)}</p>
           <div class="detail-meta">
