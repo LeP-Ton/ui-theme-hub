@@ -21,6 +21,17 @@
       return;
     }
 
+    /* 加载 sceneLabels 映射（从 summary 获取，构建时集中维护） */
+    try {
+      const summaryRes = await fetch('./themes-summary.json');
+      if (summaryRes.ok) {
+        const summaryData = await summaryRes.json();
+        window.__sceneLabels = summaryData.sceneLabels || {};
+      }
+    } catch (e) {
+      /* summary 加载失败不影响主流程，scene 回退为原始值 */
+    }
+
     let theme;
     try {
       const res = await fetch(`./themes/${encodeURIComponent(themeName)}.json`);
@@ -57,9 +68,8 @@
       ? renderDetailPreviewImages(theme)
       : renderDetailPreviewFallback(theme, primary, secondary, accent);
 
-    /* scene 徽章 */
-    const sceneLabel = { 'c-end': 'C端', 'enterprise': '企业级', 'game': '游戏' };
-    const sceneBadge = `<span class="detail-scene scene-${theme.scene}">${sceneLabel[theme.scene] || theme.scene}</span>`;
+    /* scene 徽章：从全局 sceneLabels 映射，未匹配时回退为原始值 */
+    const sceneBadge = `<span class="detail-scene scene-${theme.scene}">${escapeHTML(window.__sceneLabels?.[theme.scene] || theme.scene)}</span>`;
 
     /* tags */
     const tags = theme.tags.map(t => `<span class="detail-tag">${escapeHTML(t)}</span>`).join('');

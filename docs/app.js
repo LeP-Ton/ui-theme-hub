@@ -16,6 +16,7 @@
   /* ========== 状态管理 ========== */
   const state = {
     themes: [],          /* 轻量主题数据（来自 themes-summary.json） */
+    sceneLabels: {},     /* scene 中文映射（来自 themes-summary.json） */
     activeScene: null,   /* 当前选中的 scene，null 表示全部 */
     activeTags: new Set(), /* 当前选中的 tag 集合 */
     searchQuery: '',     /* 搜索关键字（原始输入） */
@@ -36,6 +37,7 @@
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
       state.themes = data.themes || [];
+      state.sceneLabels = data.sceneLabels || {};
     } catch (err) {
       console.error('加载主题数据失败:', err);
       $grid.innerHTML = renderEmptyState('无法加载主题数据，请刷新重试');
@@ -66,10 +68,9 @@
     `).join('');
   }
 
-  /* scene 显示名称映射 */
+  /* scene 显示名称：从构建产物 sceneLabels 映射，未匹配时回退为原始值 */
   function sceneLabel(scene) {
-    const map = { 'c-end': 'C端', 'enterprise': '企业级', 'game': '游戏' };
-    return map[scene] || scene;
+    return state.sceneLabels[scene] || scene;
   }
 
   /* ========== 事件绑定 ========== */

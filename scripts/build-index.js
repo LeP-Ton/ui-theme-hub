@@ -104,16 +104,29 @@ ${cssCode}
 /* ========== 主题格式校验 ========== */
 
 /**
- * 校验 theme.json 必填字段与类型
- * 返回 { valid, errors, warnings }
- * - errors: 严重问题，阻止该主题入库
- * - warnings: 警告问题，允许入库但输出提示
+ * 校验上下文：跨主题的唯一性检测集合
+ * 每次校验通过后由调用方更新
+ */
+const validationContext = {
+  seenDirs: new Set(),      /* dir 集合，检测目录名重复 */
+  seenNames: new Map(),     /* name → dir，检测 name 重复 */
+};
+
+/**
+ * 统一校验 theme.json 格式 + 唯一性
+ * 所有校验逻辑集中在此函数，调用方只消费结果
+ *
+ * @param {object} themeData - theme.json 解析后的对象
+ * @param {string} dirName   - 主题目录名
+ * @returns {{ valid, errors, warnings }}
+ *   - errors:   强校验失败，阻止入库
+ *   - warnings: 弱校验问题，允许入库但提示
  */
 function validateTheme(themeData, dirName) {
   const errors = [];
   const warnings = [];
 
-  /* 必填字段 */
+  /* ===== 强校验：必填字段 ===== */
   const requiredFields = ['name', 'version', 'description', 'author', 'scene', 'tags'];
   for (const field of requiredFields) {
     if (themeData[field] == null) {
@@ -121,7 +134,7 @@ function validateTheme(themeData, dirName) {
     }
   }
 
-  /* 类型校验 */
+  /* ===== 强校验：字段类型 ===== */
   if (themeData.name != null && typeof themeData.name !== 'string') {
     errors.push('name 必须为字符串');
   }
@@ -138,12 +151,22 @@ function validateTheme(themeData, dirName) {
     errors.push('requires 必须为数组');
   }
 
-  /* 已废弃字段检测 */
+  /* ===== 强校验：唯一性 ===== */
+  if (validationContext.seenDirs.has(dirName)) {
+    errors.push(`目录名重复: ${dirName}`);
+  }
+  if (themeData.name && typeof themeData.name === 'string') {
+    if (validationContext.seenNames.has(themeData.name)) {
+      errors.push(`name 重复: "${themeData.name}" 与 ${validationContext.seenNames.get(themeData.name)} 冲突`);
+    }
+  }
+
+  /* ===== 弱校验：已废弃字段 ===== */
   if ('id' in themeData) {
     warnings.push('id 字段已废弃，主题标识统一使用目录名（dir），请删除 id 字段');
   }
 
-  /* tokens 结构建议 */
+  /* ===== 弱校验：tokens 结构建议 ===== */
   if (!themeData.tokens) {
     warnings.push('缺少 tokens，详情页将无设计令牌展示');
   } else {
@@ -152,7 +175,7 @@ function validateTheme(themeData, dirName) {
     if (!themeData.tokens.typography) warnings.push('缺少 tokens.typography');
   }
 
-  /* patterns 目录检测 */
+  /* ===== 弱校验：patterns 目录 ===== */
   const patternsDir = path.join(REPO_ROOT, dirName, 'patterns');
   if (!fs.existsSync(patternsDir)) {
     warnings.push('缺少 patterns 目录，该主题将无任何模式预览');
@@ -166,13 +189,17 @@ function validateTheme(themeData, dirName) {
   return { valid: errors.length === 0, errors, warnings };
 }
 
+/* ========== 加载全局配置 ========== */
+const CONFIG_PATH = path.join(REPO_ROOT, 'theme.config.json');
+const config = fs.existsSync(CONFIG_PATH)
+  ? JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf-8'))
+  : {};
+const SCENE_LABELS = config.sceneLabels || {};
+
 /* ========== 主流程 ========== */
 
 const entries = fs.readdirSync(REPO_ROOT, { withFileTypes: true });
 const themes = [];
-/* 唯一性检测集合 */
-const seenNames = new Map();   /* name → dir，检测 name 重复 */
-const seenDirs = new Set();    /* dir 集合，检测目录名重复（理论上不可能，防御性编程） */
 
 async function main() {
   for (const entry of entries) {
@@ -183,34 +210,24 @@ async function main() {
     const themeJsonPath = path.join(REPO_ROOT, entry.name, 'theme.json');
     if (!fs.existsSync(themeJsonPath)) continue;
 
-    /* 目录名唯一性 */
-    if (seenDirs.has(entry.name)) {
-      console.error(`  ✗ 目录名重复: ${entry.name}，跳过`);
-      continue;
-    }
-    seenDirs.add(entry.name);
-
     const themeData = JSON.parse(fs.readFileSync(themeJsonPath, 'utf-8'));
 
-    /* 格式校验 */
+    /* 统一校验：格式 + 唯一性 */
     const validation = validateTheme(themeData, entry.name);
     if (validation.errors.length > 0) {
       console.error(`\n🚫 主题 ${entry.name} 校验失败:`);
       validation.errors.forEach(e => console.error(`   ✗ ${e}`));
-      continue; /* 校验不通过，跳过该主题 */
+      continue;
     }
     if (validation.warnings.length > 0) {
       console.warn(`\n⚠️  主题 ${entry.name} 存在警告:`);
       validation.warnings.forEach(w => console.warn(`   ⚠ ${w}`));
     }
 
-    /* name 唯一性校验 */
+    /* 校验通过，更新唯一性上下文 */
+    validationContext.seenDirs.add(entry.name);
     if (themeData.name) {
-      if (seenNames.has(themeData.name)) {
-        console.error(`\n🚫 主题 name 重复: "${themeData.name}" 同时出现在 ${seenNames.get(themeData.name)} 和 ${entry.name}，跳过 ${entry.name}`);
-        continue;
-      }
-      seenNames.set(themeData.name, entry.name);
+      validationContext.seenNames.set(themeData.name, entry.name);
     }
 
     console.log(`\n📦 处理主题: ${themeData.name}`);
@@ -303,8 +320,17 @@ async function main() {
     patternComponents: (t.patterns?.components || []).map(p => p.name),
   }));
 
+  /* 检测未映射的 scene 值，输出警告 */
+  const allScenes = [...new Set(themes.map(t => t.scene))];
+  for (const scene of allScenes) {
+    if (!SCENE_LABELS[scene]) {
+      console.warn(`⚠️  scene "${scene}" 未在 SCENE_LABELS 中配置中文映射，前端将显示原始值`);
+    }
+  }
+
   const summaryOutput = {
     generatedAt: new Date().toISOString(),
+    sceneLabels: SCENE_LABELS,
     themes: summary,
   };
   const summaryPath = path.join(DOCS_DIR, 'themes-summary.json');

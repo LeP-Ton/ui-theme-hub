@@ -30,6 +30,8 @@ docs/
 
 scripts/
 └── build-index.js        # 构建脚本：扫描主题 → 校验 → 编译 tsx → 生成索引
+
+theme.config.json            # 全局配置（sceneLabels 等集中维护点）
 ```
 
 ## 构建流程
@@ -37,7 +39,7 @@ scripts/
 2. 校验 theme.json 必填字段（name/version/description/author/scene/tags）+ 类型 + name 唯一性
 3. 复制主题预览图到 `docs/theme-previews/`
 4. 编译 .tsx pattern 为独立 HTML（含 React 打包 + CSS 内联）到 `docs/pattern-previews/`
-5. 生成 `docs/themes-summary.json`（轻量索引：仅含 dir/name/scene/tags/description/主色等字段）
+5. 生成 `docs/themes-summary.json`（轻量索引：含 sceneLabels 映射 + dir/name/scene/tags/description/主色等字段）
 6. 生成 `docs/themes/{dir}.json`（单主题全量数据，供详情页按需加载）
 7. 原 `docs/themes-index.json` 已废弃
 
@@ -48,7 +50,14 @@ scripts/
 
 ## 构建校验规则
 - **errors（阻止入库）**：缺少必填字段、字段类型不匹配、name 重复
-- **warnings（允许入库）**：id 废弃字段、tokens 缺失、patterns 空目录
+- **warnings（允许入库）**：id 废弃字段、tokens 缺失、patterns 空目录、scene 未映射中文
+
+## 场景映射体系
+- **theme.config.json**（项目根目录）：全局配置，sceneLabels 为 scene key → 中文显示名的唯一维护点
+- 构建脚本读取 theme.config.json，输出 sceneLabels 到 `themes-summary.json`
+- 前端（app.js / detail.js）从数据读取，不再硬编码映射
+- 新增场景只需在 `theme.config.json` 的 `sceneLabels` 加一行，前端自动生效
+- 未映射的 scene 构建时输出警告，前端 fallback 为英文原始值
 
 ## CSS 处理机制
 CSS 由 .tsx 中的 import 驱动，esbuild css loader 自动提取到 out.css 并内联到 HTML：

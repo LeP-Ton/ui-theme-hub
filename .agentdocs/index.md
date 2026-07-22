@@ -1,6 +1,8 @@
 # AgentDocs 索引
 
 ## 当前变更文档
+`workflow/20260722102604-unify-validation-context.md` - 校验逻辑统一：name/dir 唯一性收入 validateTheme
+`workflow/20260720174034-scene-labels-data-driven.md` - scene 中文映射从硬编码改为数据驱动
 `workflow/20260720164155-unify-theme-id-name-validation.md` - 统一主题标识：删除 id 字段，name 改中文，新增构建校验
 `workflow/20260706154000-split-index-two-layer.md` - themes-index.json 拆为两层：轻量索引 + 按需详情
 `workflow/260622172639-download-btn-style.md` - 下载按钮样式调整：纯文字风格 + 详情页同行右侧

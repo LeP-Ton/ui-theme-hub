@@ -1,5 +1,10 @@
 {
-  "generatedAt": "2026-07-20T08:41:45.896Z",
+  "generatedAt": "2026-07-22T03:39:08.532Z",
+  "sceneLabels": {
+    "c-end": "C端",
+    "enterprise": "企业级",
+    "game": "游戏"
+  },
   "themes": [
     {
       "dir": "boss-theme-orange",
