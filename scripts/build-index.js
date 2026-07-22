@@ -101,6 +101,18 @@ ${cssCode}
   }
 }
 
+/* ========== 主题源目录与配置 ========== */
+
+/* 主题源目录：themes/ 下每个含 theme.json 的子目录即为一个主题 */
+const THEMES_DIR = path.join(REPO_ROOT, 'themes');
+
+/* 全局配置 */
+const CONFIG_PATH = path.join(REPO_ROOT, 'theme.config.json');
+const config = fs.existsSync(CONFIG_PATH)
+  ? JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf-8'))
+  : {};
+const SCENE_LABELS = config.sceneLabels || {};
+
 /* ========== 主题格式校验 ========== */
 
 /**
@@ -176,7 +188,7 @@ function validateTheme(themeData, dirName) {
   }
 
   /* ===== 弱校验：patterns 目录 ===== */
-  const patternsDir = path.join(REPO_ROOT, dirName, 'patterns');
+  const patternsDir = path.join(THEMES_DIR, dirName, 'patterns');
   if (!fs.existsSync(patternsDir)) {
     warnings.push('缺少 patterns 目录，该主题将无任何模式预览');
   } else {
@@ -189,25 +201,16 @@ function validateTheme(themeData, dirName) {
   return { valid: errors.length === 0, errors, warnings };
 }
 
-/* ========== 加载全局配置 ========== */
-const CONFIG_PATH = path.join(REPO_ROOT, 'theme.config.json');
-const config = fs.existsSync(CONFIG_PATH)
-  ? JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf-8'))
-  : {};
-const SCENE_LABELS = config.sceneLabels || {};
-
 /* ========== 主流程 ========== */
-
-const entries = fs.readdirSync(REPO_ROOT, { withFileTypes: true });
+const entries = fs.readdirSync(THEMES_DIR, { withFileTypes: true });
 const themes = [];
 
 async function main() {
   for (const entry of entries) {
     if (!entry.isDirectory()) continue;
     if (entry.name.startsWith('.')) continue;
-    if (['docs', 'scripts', 'node_modules', '.tmp-build'].includes(entry.name)) continue;
 
-    const themeJsonPath = path.join(REPO_ROOT, entry.name, 'theme.json');
+    const themeJsonPath = path.join(THEMES_DIR, entry.name, 'theme.json');
     if (!fs.existsSync(themeJsonPath)) continue;
 
     const themeData = JSON.parse(fs.readFileSync(themeJsonPath, 'utf-8'));
@@ -233,7 +236,7 @@ async function main() {
     console.log(`\n📦 处理主题: ${themeData.name}`);
 
     /* 扫描预览图片 */
-    const previewDir = path.join(REPO_ROOT, entry.name, 'previews');
+    const previewDir = path.join(THEMES_DIR, entry.name, 'previews');
     const previews = [];
     if (fs.existsSync(previewDir)) {
       const themeOutputDir = path.join(PREVIEW_OUTPUT_DIR, entry.name);
@@ -253,8 +256,8 @@ async function main() {
     /* 扫描 patterns/ 目录中的 .tsx 文件 */
     const patterns = { pages: [], components: [] };
     const patternDirs = [
-      { key: 'pages', dir: path.join(REPO_ROOT, entry.name, 'patterns', 'pages') },
-      { key: 'components', dir: path.join(REPO_ROOT, entry.name, 'patterns', 'components') },
+      { key: 'pages', dir: path.join(THEMES_DIR, entry.name, 'patterns', 'pages') },
+      { key: 'components', dir: path.join(THEMES_DIR, entry.name, 'patterns', 'components') },
     ];
 
     for (const { key, dir } of patternDirs) {
@@ -362,7 +365,7 @@ async function main() {
 
   for (const theme of themes) {
     const themeId = theme.dir;
-    const themeDir = path.join(REPO_ROOT, theme.dir);
+    const themeDir = path.join(THEMES_DIR, theme.dir);
     const tmpDir = path.join(REPO_ROOT, '.tmp-package', themeId);
 
     /* 准备临时打包目录：仅主题目录，用户自行放置 */

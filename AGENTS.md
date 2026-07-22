@@ -11,37 +11,38 @@ UI 主题资产管理中心，采用纯静态站点架构，通过 GitHub Pages 
 
 ## 目录结构
 ```
-{theme-dir}/              # 目录名即主题唯一标识（dir）
-├── theme.json            # 主题元数据 + 设计 tokens（无 id 字段，name 为中文显示名）
-├── patterns/
-│   ├── pages/            # 页面级 .tsx 模板
-│   └── components/       # 组件级 .tsx 模板
-├── previews/             # 预览截图
-└── standards/            # 设计规范（预留）
+themes/                    # 主题源目录（包含法：所有主题在此）
+├── {theme-dir}/           # 目录名即主题唯一标识（dir）
+│   ├── theme.json         # 主题元数据 + 设计 tokens（无 id 字段，name 为中文显示名）
+│   ├── patterns/
+│   │   ├── pages/         # 页面级 .tsx 模板
+│   │   └── components/    # 组件级 .tsx 模板
+│   ├── previews/          # 预览截图
+│   └── standards/         # 设计规范（预留）
 
 docs/
-├── index.html            # 主题列表页
-├── detail.html/js/css    # 主题详情页（tokens 可视化 + pattern 预览/源码切换）
-├── pattern-previews/     # 编译后的 .tsx 预览 HTML（自动生成）
-├── theme-previews/       # 主题截图（自动复制）
-├── themes-summary.json   # 轻量索引（自动生成，供列表页和 AI 场景识别）
-└── themes/               # 单主题全量 JSON（自动生成，供详情页按需加载）
+├── index.html             # 主题列表页
+├── detail.html/js/css     # 主题详情页（tokens 可视化 + pattern 预览/源码切换）
+├── pattern-previews/      # 编译后的 .tsx 预览 HTML（自动生成）
+├── theme-previews/        # 主题截图（自动复制）
+├── themes-summary.json    # 轻量索引（自动生成，含 sceneLabels + 主题摘要）
+└── themes/                # 单主题全量 JSON（自动生成，供详情页按需加载）
     └── {dir}.json
 
 scripts/
-└── build-index.js        # 构建脚本：扫描主题 → 校验 → 编译 tsx → 生成索引
+└── build-index.js         # 构建脚本：扫描 themes/ → 校验 → 编译 tsx → 生成索引
 
-theme.config.json            # 全局配置（sceneLabels 等集中维护点）
+theme.config.json          # 全局配置（sceneLabels 等集中维护点）
 ```
 
 ## 构建流程
-1. `node scripts/build-index.js` 扫描所有含 `theme.json` 的目录
-2. 校验 theme.json 必填字段（name/version/description/author/scene/tags）+ 类型 + name 唯一性
+1. `node scripts/build-index.js` 扫描 `themes/` 下所有含 `theme.json` 的子目录
+2. 校验 theme.json 必填字段 + 类型 + name/dir 唯一性（统一在 validateTheme 中）
 3. 复制主题预览图到 `docs/theme-previews/`
 4. 编译 .tsx pattern 为独立 HTML（含 React 打包 + CSS 内联）到 `docs/pattern-previews/`
 5. 生成 `docs/themes-summary.json`（轻量索引：含 sceneLabels 映射 + dir/name/scene/tags/description/主色等字段）
 6. 生成 `docs/themes/{dir}.json`（单主题全量数据，供详情页按需加载）
-7. 原 `docs/themes-index.json` 已废弃
+7. 生成各主题 zip 包到 `docs/packages/`
 
 ## 主题标识体系
 - **dir（目录名）**：唯一标识，用于 URL 路由、zip 文件名、详情 JSON 文件名、installed 参数匹配
@@ -49,8 +50,8 @@ theme.config.json            # 全局配置（sceneLabels 等集中维护点）
 - **id 字段已废弃**：原 id 与 dir 冗余，已删除；theme.json 中若残留 id 会触发构建警告
 
 ## 构建校验规则
-- **errors（阻止入库）**：缺少必填字段、字段类型不匹配、name 重复
-- **warnings（允许入库）**：id 废弃字段、tokens 缺失、patterns 空目录、scene 未映射中文
+- **强校验（errors — 阻止入库）**：必填字段缺失、字段类型不匹配、dir 重复、name 重复
+- **弱校验（warnings — 允许入库）**：id 废弃字段、tokens 缺失、patterns 空目录、scene 未映射中文
 
 ## 场景映射体系
 - **theme.config.json**（项目根目录）：全局配置，sceneLabels 为 scene key → 中文显示名的唯一维护点
@@ -92,6 +93,8 @@ CSS 由 .tsx 中的 import 驱动，esbuild css loader 自动提取到 out.css �
 - 构建时生成 zip，前端直接下载
 
 ## 关键认知
+- 主题源目录统一放在 `themes/` 下，构建脚本用包含法识别（themes/ 子目录含 theme.json 即为主题）
+- 旧版用排除法扫描根目录，每加非主题目录需改排除列表，已废弃
 - Pattern .tsx 可使用内联样式或第三方组件库（如 antd），由主题定位决定
 - CSS 通过 import 驱动，构建脚本不硬编码任何库的 CSS 路径
 - esbuild `write: false` 在此环境下 outputFiles 为空，需用 `write: true` + 读文件
