@@ -1,11 +1,75 @@
 {
-  "generatedAt": "2026-07-22T06:23:28.189Z",
+  "generatedAt": "2026-07-23T14:38:23.246Z",
   "sceneLabels": {
     "c-end": "C端",
     "enterprise": "企业级",
-    "game": "游戏"
+    "game": "游戏",
+    "presentation": "演讲"
   },
   "themes": [
+    {
+      "dir": "ai-ppt-theme",
+      "name": "AI 演示稿",
+      "version": "1.0.0",
+      "description": "AI 主题分享演示稿风格，暖橙 + 天蓝双色搭配、毛玻璃面板与浮动光斑，适合技术分享、团队内训与轻量演讲",
+      "author": "设计团队P",
+      "scene": "presentation",
+      "tags": [
+        "presentation",
+        "slide",
+        "sharing",
+        "tech-talk",
+        "warm",
+        "glassmorphism"
+      ],
+      "requires": [
+        {
+          "name": "poem",
+          "source": "https://github.com/LeP-Ton/poem.git"
+        }
+      ],
+      "previews": [],
+      "primaryColor": "#ff6a3d",
+      "secondaryColor": "#0076ff",
+      "accentColor": "#ff946e",
+      "patternPages": [
+        "slide-deck"
+      ],
+      "patternComponents": [
+        "dual-column-card"
+      ]
+    },
+    {
+      "dir": "apple-theme",
+      "name": "Apple 风格",
+      "version": "1.0.0",
+      "description": "Apple 风格主题，简洁优雅，适合C端产品、营销落地页和移动端",
+      "author": "设计团队C",
+      "scene": "c-end",
+      "tags": [
+        "c-end",
+        "marketing",
+        "mobile",
+        "apple",
+        "elegant"
+      ],
+      "requires": [
+        {
+          "name": "tailwind",
+          "source": "https://github.com/tailwindlabs/tailwindcss"
+        }
+      ],
+      "previews": [],
+      "primaryColor": "#fa8c16",
+      "secondaryColor": "#faad14",
+      "accentColor": "#eb2f96",
+      "patternPages": [
+        "landing-page"
+      ],
+      "patternComponents": [
+        "feature-grid"
+      ]
+    },
     {
       "dir": "boss-theme-orange",
       "name": "企业橙",
@@ -101,37 +165,6 @@
       ],
       "patternComponents": [
         "character-panel"
-      ]
-    },
-    {
-      "dir": "apple-theme",
-      "name": "Apple 风格",
-      "version": "1.0.0",
-      "description": "Apple 风格主题，简洁优雅，适合C端产品、营销落地页和移动端",
-      "author": "设计团队C",
-      "scene": "c-end",
-      "tags": [
-        "c-end",
-        "marketing",
-        "mobile",
-        "apple",
-        "elegant"
-      ],
-      "requires": [
-        {
-          "name": "tailwind",
-          "source": "https://github.com/tailwindlabs/tailwindcss"
-        }
-      ],
-      "previews": [],
-      "primaryColor": "#fa8c16",
-      "secondaryColor": "#faad14",
-      "accentColor": "#eb2f96",
-      "patternPages": [
-        "landing-page"
-      ],
-      "patternComponents": [
-        "feature-grid"
       ]
     }
   ]

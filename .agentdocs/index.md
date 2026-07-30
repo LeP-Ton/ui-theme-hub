@@ -1,6 +1,7 @@
 # AgentDocs 索引
 
 ## 当前变更文档
+`workflow/20260723223800-extract-ai-ppt-theme.md` - 提炼 ai-ppt 项目为一个 PPT 主题（AI 演示稿，scene=presentation）
 `workflow/20260722143646-readme-full-rewrite.md` - README 全面重写
 `workflow/20260722120352-themes-dir-migration.md` - 主题目录迁移到 themes/ 子目录（排除法→包含法）
 `workflow/20260722102604-unify-validation-context.md` - 校验逻辑统一：name/dir 唯一性收入 validateTheme

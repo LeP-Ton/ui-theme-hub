@@ -69,6 +69,7 @@ CSS 由 .tsx 中的 import 驱动，esbuild css loader 自动提取到 out.css �
 ## 当前主题
 | 目录名 (dir) | 显示名 (name) | 场景 | 主色 | Patterns |
 |--------------|---------------|------|------|----------|
+| ai-ppt-theme | AI 演示稿 | 演讲 | #ff6a3d (橙) | slide-deck, dual-column-card |
 | apple-theme | Apple 风格 | C端 | #fa8c16 (橙) | landing-page, feature-grid |
 | boss-theme-blue | 企业蓝 | 企业级 | #1677ff (蓝) | dashboard, stats-cards |
 | boss-theme-orange | 企业橙 | 企业级 | #ff6600 (橙) | list-page, form-section |

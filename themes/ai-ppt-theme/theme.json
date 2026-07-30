@@ -1,0 +1,104 @@
+{
+  "name": "AI 演示稿",
+  "version": "1.0.0",
+  "description": "AI 主题分享演示稿风格，暖橙 + 天蓝双色搭配、毛玻璃面板与浮动光斑，适合技术分享、团队内训与轻量演讲",
+  "author": "设计团队P",
+  "scene": "presentation",
+  "tags": ["presentation", "slide", "sharing", "tech-talk", "warm", "glassmorphism"],
+  "requires": [
+    { "name": "poem", "source": "https://github.com/LeP-Ton/poem.git" }
+  ],
+  "tokens": {
+    "color": {
+      "primary": "#ff6a3d",
+      "secondary": "#0076ff",
+      "accent": "#ff946e",
+      "success": "#0a6d3f",
+      "warning": "#d89614",
+      "error": "#b92d2d",
+      "info": "#0076ff",
+      "background": {
+        "base": "#f4f8ff",
+        "elevated": "#ffffff",
+        "muted": "#fff5ea"
+      },
+      "text": {
+        "primary": "#0f2238",
+        "secondary": "#35506d",
+        "muted": "rgba(15, 34, 56, 0.45)",
+        "inverse": "#ffffff"
+      },
+      "border": {
+        "default": "rgba(12, 35, 64, 0.14)",
+        "muted": "rgba(12, 35, 64, 0.08)"
+      },
+      "extended": {
+        "panelBg": "rgba(255, 255, 255, 0.8)",
+        "panelBgHover": "rgba(255, 255, 255, 0.92)",
+        "shapeOrangeA": "#ffd097",
+        "shapeOrangeB": "#ff7d45",
+        "shapeBlueA": "#8ce7ff",
+        "shapeBlueB": "#0076ff",
+        "shapeYellowA": "#ffe8c2",
+        "shapeYellowB": "#ffbe7d",
+        "gradientBg": "linear-gradient(130deg, #f4f8ff, #fff5ea)",
+        "gradientPrimary": "linear-gradient(120deg, #ff6a3d, #ff946e)",
+        "gradientProgress": "linear-gradient(120deg, #0076ff, #58b3ff)",
+        "gradientStrongCard": "linear-gradient(140deg, rgba(255,255,255,0.93), rgba(231,243,255,0.9))",
+        "calloutBg": "rgba(255, 106, 61, 0.11)"
+      }
+    },
+    "spacing": {
+      "unit": 4,
+      "scale": [0, 4, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80, 96],
+      "extended": {
+        "topbarPadding": 20,
+        "deckPadding": 24,
+        "slidePadding": 38,
+        "outlineWidth": 260,
+        "statusbarGap": 14,
+        "sectionGap": 16,
+        "cardPadding": 16,
+        "containerMaxWidth": 720,
+        "topbarHeight": 88,
+        "statusbarHeight": 56,
+        "radiusLg": 22,
+        "radiusMd": 14
+      }
+    },
+    "typography": {
+      "fontFamily": {
+        "base": "'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif",
+        "heading": "'Space Grotesk', 'Noto Sans SC', sans-serif",
+        "code": "'Space Grotesk', 'Noto Sans SC', monospace"
+      },
+      "fontSize": {
+        "xs": 12,
+        "sm": 13,
+        "base": 14,
+        "lg": 16,
+        "xl": 20,
+        "2xl": 24,
+        "3xl": 30,
+        "4xl": 36
+      },
+      "fontWeight": { "normal": 400, "medium": 500, "semibold": 600, "bold": 700, "black": 900 },
+      "lineHeight": { "tight": 1.2, "base": 1.5, "relaxed": 1.7, "loose": 1.8 }
+    },
+    "border": {
+      "radius": { "none": 0, "sm": 8, "base": 12, "lg": 14, "xl": 22, "full": 9999 },
+      "width": { "thin": 1, "base": 1, "thick": 5 }
+    },
+    "shadow": {
+      "sm": "0 2px 8px rgba(15, 34, 56, 0.06)",
+      "base": "0 8px 20px rgba(15, 34, 56, 0.1)",
+      "lg": "0 12px 32px rgba(15, 34, 56, 0.12)",
+      "xl": "0 16px 40px rgba(15, 34, 56, 0.16)"
+    },
+    "motion": {
+      "enabled": true,
+      "duration": { "fast": "0.22s", "base": "0.34s", "slow": "0.38s" },
+      "easing": { "standard": "ease", "decelerate": "ease-out", "accelerate": "ease-in" }
+    }
+  }
+}

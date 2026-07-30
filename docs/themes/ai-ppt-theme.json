@@ -1,0 +1,178 @@
+{
+  "dir": "ai-ppt-theme",
+  "name": "AI 演示稿",
+  "version": "1.0.0",
+  "description": "AI 主题分享演示稿风格，暖橙 + 天蓝双色搭配、毛玻璃面板与浮动光斑，适合技术分享、团队内训与轻量演讲",
+  "author": "设计团队P",
+  "scene": "presentation",
+  "tags": [
+    "presentation",
+    "slide",
+    "sharing",
+    "tech-talk",
+    "warm",
+    "glassmorphism"
+  ],
+  "requires": [
+    {
+      "name": "poem",
+      "source": "https://github.com/LeP-Ton/poem.git"
+    }
+  ],
+  "tokens": {
+    "color": {
+      "primary": "#ff6a3d",
+      "secondary": "#0076ff",
+      "accent": "#ff946e",
+      "success": "#0a6d3f",
+      "warning": "#d89614",
+      "error": "#b92d2d",
+      "info": "#0076ff",
+      "background": {
+        "base": "#f4f8ff",
+        "elevated": "#ffffff",
+        "muted": "#fff5ea"
+      },
+      "text": {
+        "primary": "#0f2238",
+        "secondary": "#35506d",
+        "muted": "rgba(15, 34, 56, 0.45)",
+        "inverse": "#ffffff"
+      },
+      "border": {
+        "default": "rgba(12, 35, 64, 0.14)",
+        "muted": "rgba(12, 35, 64, 0.08)"
+      },
+      "extended": {
+        "panelBg": "rgba(255, 255, 255, 0.8)",
+        "panelBgHover": "rgba(255, 255, 255, 0.92)",
+        "shapeOrangeA": "#ffd097",
+        "shapeOrangeB": "#ff7d45",
+        "shapeBlueA": "#8ce7ff",
+        "shapeBlueB": "#0076ff",
+        "shapeYellowA": "#ffe8c2",
+        "shapeYellowB": "#ffbe7d",
+        "gradientBg": "linear-gradient(130deg, #f4f8ff, #fff5ea)",
+        "gradientPrimary": "linear-gradient(120deg, #ff6a3d, #ff946e)",
+        "gradientProgress": "linear-gradient(120deg, #0076ff, #58b3ff)",
+        "gradientStrongCard": "linear-gradient(140deg, rgba(255,255,255,0.93), rgba(231,243,255,0.9))",
+        "calloutBg": "rgba(255, 106, 61, 0.11)"
+      }
+    },
+    "spacing": {
+      "unit": 4,
+      "scale": [
+        0,
+        4,
+        8,
+        12,
+        16,
+        20,
+        24,
+        32,
+        40,
+        48,
+        64,
+        80,
+        96
+      ],
+      "extended": {
+        "topbarPadding": 20,
+        "deckPadding": 24,
+        "slidePadding": 38,
+        "outlineWidth": 260,
+        "statusbarGap": 14,
+        "sectionGap": 16,
+        "cardPadding": 16,
+        "containerMaxWidth": 720,
+        "topbarHeight": 88,
+        "statusbarHeight": 56,
+        "radiusLg": 22,
+        "radiusMd": 14
+      }
+    },
+    "typography": {
+      "fontFamily": {
+        "base": "'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif",
+        "heading": "'Space Grotesk', 'Noto Sans SC', sans-serif",
+        "code": "'Space Grotesk', 'Noto Sans SC', monospace"
+      },
+      "fontSize": {
+        "xs": 12,
+        "sm": 13,
+        "base": 14,
+        "lg": 16,
+        "xl": 20,
+        "2xl": 24,
+        "3xl": 30,
+        "4xl": 36
+      },
+      "fontWeight": {
+        "normal": 400,
+        "medium": 500,
+        "semibold": 600,
+        "bold": 700,
+        "black": 900
+      },
+      "lineHeight": {
+        "tight": 1.2,
+        "base": 1.5,
+        "relaxed": 1.7,
+        "loose": 1.8
+      }
+    },
+    "border": {
+      "radius": {
+        "none": 0,
+        "sm": 8,
+        "base": 12,
+        "lg": 14,
+        "xl": 22,
+        "full": 9999
+      },
+      "width": {
+        "thin": 1,
+        "base": 1,
+        "thick": 5
+      }
+    },
+    "shadow": {
+      "sm": "0 2px 8px rgba(15, 34, 56, 0.06)",
+      "base": "0 8px 20px rgba(15, 34, 56, 0.1)",
+      "lg": "0 12px 32px rgba(15, 34, 56, 0.12)",
+      "xl": "0 16px 40px rgba(15, 34, 56, 0.16)"
+    },
+    "motion": {
+      "enabled": true,
+      "duration": {
+        "fast": "0.22s",
+        "base": "0.34s",
+        "slow": "0.38s"
+      },
+      "easing": {
+        "standard": "ease",
+        "decelerate": "ease-out",
+        "accelerate": "ease-in"
+      }
+    }
+  },
+  "previews": [],
+  "patterns": {
+    "pages": [
+      {
+        "name": "slide-deck",
+        "file": "slide-deck.tsx",
+        "source": "/**\n * AI 演示稿 - 演讲幻灯片页面\n * 提炼自 ai-ppt 项目：顶部元信息 + 浮动光斑背景 + 单页幻灯片内容\n * 使用 ai-ppt-theme tokens：primary=#ff6a3d, secondary=#0076ff, bg=#f4f8ff→#fff5ea\n */\nimport React from 'react';\n\nconst SlidePage: React.FC = () => {\n  return (\n    <div style={styles.deck}>\n      {/* 浮动彩色光斑背景层 */}\n      <div style={styles.bgShapes} aria-hidden=\"true\">\n        <span style={styles.shapeA} />\n        <span style={styles.shapeB} />\n        <span style={styles.shapeC} />\n      </div>\n\n      {/* 顶部元信息栏 */}\n      <header style={styles.topbar}>\n        <div style={styles.deckMeta}>\n          <p style={styles.deckKicker}>Prompt Sharing Draft</p>\n          <h1 style={styles.deckTitle}>提示词、Skills 与 AI Workflow：我的实践分享</h1>\n        </div>\n        <div style={styles.controlGroup}>\n          <span style={styles.btnTag}>01 / 08</span>\n          <span style={styles.btnPrimary}>下一页</span>\n        </div>\n      </header>\n\n      {/* 主舞台：单页幻灯片 */}\n      <main style={styles.slideStage}>\n        <article style={styles.slide}>\n          <p style={styles.slideTag}>01 前言</p>\n          <h2 style={styles.slideTitle}>作为第一个分享者：希望打开视野，也欢迎高手指点</h2>\n          <p style={styles.lead}>\n            其实这周时间比较紧张，准备不太充分，有点担心没讲好；既然是分享，我也真心希望有高手提出建议。\n          </p>\n\n          {/* 三栏指标卡片：前言页典型结构 */}\n          <div style={styles.metricGrid}>\n            {[\n              { value: '定位', label: '第一个分享者，先抛砖引玉' },\n              { value: '主题', label: '提示词设计与实战玩法' },\n              { value: '互动', label: '欢迎现场补充与会后交流' },\n            ].map((m, i) => (\n              <div key={i} style={styles.metricCard}>\n                <p style={styles.metricValue}>{m.value}</p>\n                <p style={styles.metricLabel}>{m.label}</p>\n              </div>\n            ))}\n          </div>\n        </article>\n      </main>\n\n      {/* 底部进度栏 */}\n      <footer style={styles.statusbar}>\n        <span style={styles.statusText}>1 / 8</span>\n        <div style={styles.progressTrack}>\n          <span style={styles.progressBar} />\n        </div>\n      </footer>\n    </div>\n  );\n};\n\n/* 内联样式，使用 ai-ppt-theme token 值 */\nconst styles: Record<string, React.CSSProperties> = {\n  deck: {\n    position: 'relative',\n    fontFamily: \"'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif\",\n    color: '#0f2238',\n    background: 'linear-gradient(130deg, #f4f8ff, #fff5ea)',\n    minHeight: '100vh',\n    overflow: 'hidden',\n    display: 'flex',\n    flexDirection: 'column',\n  },\n  /* 浮动光斑背景 */\n  bgShapes: {\n    position: 'absolute',\n    inset: 0,\n    zIndex: 0,\n    pointerEvents: 'none',\n  },\n  shapeA: {\n    position: 'absolute',\n    width: 420,\n    height: 420,\n    top: -120,\n    left: -60,\n    borderRadius: 999,\n    filter: 'blur(2px)',\n    opacity: 0.58,\n    background: 'radial-gradient(circle at 30% 30%, #ffd097, #ff7d45)',\n  },\n  shapeB: {\n    position: 'absolute',\n    width: 360,\n    height: 360,\n    right: '12%',\n    top: '8%',\n    borderRadius: 999,\n    filter: 'blur(2px)',\n    opacity: 0.58,\n    background: 'radial-gradient(circle at 40% 40%, #8ce7ff, #0076ff)',\n  },\n  shapeC: {\n    position: 'absolute',\n    width: 280,\n    height: 280,\n    right: '10%',\n    bottom: -80,\n    borderRadius: 999,\n    filter: 'blur(2px)',\n    opacity: 0.58,\n    background: 'radial-gradient(circle at 30% 30%, #ffe8c2, #ffbe7d)',\n  },\n  /* 顶部元信息 */\n  topbar: {\n    position: 'relative',\n    zIndex: 2,\n    display: 'flex',\n    justifyContent: 'space-between',\n    alignItems: 'flex-start',\n    gap: 16,\n    padding: '20px 24px 10px',\n  },\n  deckMeta: {\n    maxWidth: 720,\n  },\n  deckKicker: {\n    margin: 0,\n    fontFamily: \"'Space Grotesk', 'Noto Sans SC', sans-serif\",\n    fontSize: '0.88rem',\n    color: '#0076ff',\n    textTransform: 'uppercase',\n    letterSpacing: '0.02em',\n  },\n  deckTitle: {\n    margin: '8px 0 0',\n    fontFamily: \"'Space Grotesk', 'Noto Sans SC', sans-serif\",\n    fontSize: '2.1rem',\n    lineHeight: 1.2,\n    letterSpacing: '0.02em',\n  },\n  controlGroup: {\n    display: 'flex',\n    flexWrap: 'wrap',\n    gap: 10,\n    justifyContent: 'flex-end',\n    alignItems: 'center',\n  },\n  btnTag: {\n    border: '1px solid rgba(12, 35, 64, 0.14)',\n    background: 'rgba(255, 255, 255, 0.82)',\n    color: '#0f2238',\n    borderRadius: 999,\n    padding: '8px 14px',\n    fontSize: '0.88rem',\n    fontFamily: \"'Space Grotesk', sans-serif\",\n    fontWeight: 700,\n  },\n  btnPrimary: {\n    background: 'linear-gradient(120deg, #ff6a3d, #ff946e)',\n    color: '#fff',\n    border: '1px solid transparent',\n    borderRadius: 999,\n    padding: '8px 14px',\n    fontSize: '0.88rem',\n    fontWeight: 600,\n  },\n  /* 幻灯片舞台：毛玻璃面板 */\n  slideStage: {\n    position: 'relative',\n    zIndex: 2,\n    flex: 1,\n    margin: '0 24px 18px',\n    borderRadius: 22,\n    border: '1px solid rgba(12, 35, 64, 0.14)',\n    background: 'rgba(255, 255, 255, 0.8)',\n    backdropFilter: 'blur(8px)',\n    boxShadow: '0 12px 32px rgba(15, 34, 56, 0.12)',\n    overflow: 'hidden',\n    minHeight: 460,\n  },\n  slide: {\n    position: 'relative',\n    height: '100%',\n    minHeight: 460,\n    padding: 38,\n    display: 'flex',\n    flexDirection: 'column',\n    gap: 16,\n  },\n  slideTag: {\n    margin: 0,\n    fontFamily: \"'Space Grotesk', 'Noto Sans SC', sans-serif\",\n    fontSize: '0.82rem',\n    color: '#0076ff',\n    textTransform: 'uppercase',\n    letterSpacing: '0.02em',\n  },\n  slideTitle: {\n    margin: 0,\n    fontSize: '2.5rem',\n    lineHeight: 1.2,\n    wordBreak: 'break-word',\n  },\n  lead: {\n    margin: 0,\n    fontSize: '1.25rem',\n    color: '#35506d',\n    lineHeight: 1.7,\n    maxWidth: '70ch',\n  },\n  /* 三栏指标卡片 */\n  metricGrid: {\n    display: 'grid',\n    gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',\n    gap: 16,\n    marginTop: 'auto',\n  },\n  metricCard: {\n    border: '1px solid rgba(12, 35, 64, 0.14)',\n    borderRadius: 14,\n    background: 'rgba(255, 255, 255, 0.7)',\n    padding: 18,\n  },\n  metricValue: {\n    margin: 0,\n    fontFamily: \"'Space Grotesk', 'Noto Sans SC', sans-serif\",\n    fontSize: '2rem',\n    color: '#ff6a3d',\n    letterSpacing: '0.02em',\n  },\n  metricLabel: {\n    margin: '6px 0 0',\n    color: '#35506d',\n    fontSize: '0.9rem',\n  },\n  /* 底部进度栏 */\n  statusbar: {\n    position: 'relative',\n    zIndex: 2,\n    display: 'grid',\n    gridTemplateColumns: 'auto 1fr auto',\n    alignItems: 'center',\n    gap: 14,\n    padding: '0 24px 16px',\n  },\n  statusText: {\n    fontFamily: \"'Space Grotesk', 'Noto Sans SC', sans-serif\",\n    fontWeight: 700,\n    color: '#0f2238',\n  },\n  progressTrack: {\n    height: 8,\n    background: 'rgba(255, 255, 255, 0.74)',\n    border: '1px solid rgba(12, 35, 64, 0.14)',\n    borderRadius: 999,\n    overflow: 'hidden',\n  },\n  progressBar: {\n    display: 'block',\n    width: '12.5%',\n    height: '100%',\n    background: 'linear-gradient(120deg, #0076ff, #58b3ff)',\n  },\n};\n\nexport default SlidePage;\n",
+        "preview": "pattern-previews/ai-ppt-theme/pages/slide-deck.html"
+      }
+    ],
+    "components": [
+      {
+        "name": "dual-column-card",
+        "file": "dual-column-card.tsx",
+        "source": "/**\n * AI 演示稿 - 双栏对照卡片组件\n * 提炼自 ai-ppt 的 dual-column + card 结构，适合「问题 / 方法」「痛点 / 方案」类对照页\n * 使用 ai-ppt-theme tokens：primary=#ff6a3d, secondary=#0076ff, calloutBg\n */\nimport React from 'react';\n\nconst DualColumnCard: React.FC = () => {\n  return (\n    <div style={styles.slide}>\n      <p style={styles.slideTag}>02 提示词</p>\n      <h2 style={styles.slideTitle}>怎么设计提示词：全局提示词 + Agent 历史文档</h2>\n\n      <div style={styles.dualColumn}>\n        {/* 左：问题本质 */}\n        <div style={styles.card}>\n          <h3 style={styles.cardTitle}>问题本质</h3>\n          <ul style={styles.cardList}>\n            <li>自然语言本身是模糊的，很难完全没有歧义</li>\n            <li>上下文长度有限，关键信息可能被覆盖或遗失</li>\n            <li>多轮任务里目标容易漂移，输出不稳定</li>\n          </ul>\n        </div>\n        {/* 右：我的方法 */}\n        <div style={styles.card}>\n          <h3 style={styles.cardTitle}>我的方法</h3>\n          <ul style={styles.cardList}>\n            <li>全局提示词：统一目标、边界、输出格式</li>\n            <li>Agent 历史文档：沉淀决策过程与关键记忆</li>\n            <li>每轮只补充差量信息，降低对话漂移</li>\n          </ul>\n        </div>\n      </div>\n\n      {/* 关键词条幅 */}\n      <div style={styles.callout}>\n        <p style={styles.calloutText}>关键词：【全局提示词】【Agent 历史文档】【差量补充】</p>\n      </div>\n    </div>\n  );\n};\n\nconst styles: Record<string, React.CSSProperties> = {\n  slide: {\n    fontFamily: \"'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif\",\n    color: '#0f2238',\n    background: 'linear-gradient(130deg, #f4f8ff, #fff5ea)',\n    padding: 38,\n    minHeight: 460,\n    borderRadius: 22,\n    display: 'flex',\n    flexDirection: 'column',\n    gap: 16,\n  },\n  slideTag: {\n    margin: 0,\n    fontFamily: \"'Space Grotesk', 'Noto Sans SC', sans-serif\",\n    fontSize: '0.82rem',\n    color: '#0076ff',\n    textTransform: 'uppercase',\n    letterSpacing: '0.02em',\n  },\n  slideTitle: {\n    margin: 0,\n    fontSize: '2.2rem',\n    lineHeight: 1.2,\n    wordBreak: 'break-word',\n  },\n  dualColumn: {\n    display: 'grid',\n    gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',\n    gap: 14,\n    flex: 1,\n  },\n  card: {\n    border: '1px solid rgba(12, 35, 64, 0.14)',\n    borderRadius: 14,\n    background: 'rgba(255, 255, 255, 0.73)',\n    padding: 16,\n  },\n  cardTitle: {\n    margin: '0 0 8px',\n    fontFamily: \"'Space Grotesk', 'Noto Sans SC', sans-serif\",\n    fontSize: '1.1rem',\n    letterSpacing: '0.02em',\n  },\n  cardList: {\n    margin: 0,\n    padding: 0,\n    listStyle: 'disc inside',\n    color: '#35506d',\n    lineHeight: 1.8,\n    fontSize: '0.95rem',\n  },\n  /* 关键词条幅：左边框强调 */\n  callout: {\n    borderLeft: '5px solid #ff6a3d',\n    borderRadius: 12,\n    background: 'rgba(255, 106, 61, 0.11)',\n    padding: '12px 14px',\n  },\n  calloutText: {\n    margin: 0,\n    color: '#0f2238',\n    fontWeight: 600,\n    lineHeight: 1.7,\n  },\n};\n\nexport default DualColumnCard;\n",
+        "preview": "pattern-previews/ai-ppt-theme/components/dual-column-card.html"
+      }
+    ]
+  }
+}
