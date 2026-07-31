@@ -4,5 +4,59 @@
     "enterprise": "企业级",
     "game": "游戏",
     "presentation": "演讲"
+  },
+  "sizeLimits": {
+    "_doc": "大小评估阈值（防止主题无限膨胀）。source 组按 token 量化（进 AI 上下文），output 组按字节量化（编译产物）。超限会在构建末尾汇总并 fail build（退出码 1）。详见 README「大小限制配置」章节。调整阈值只改本文件，无需改代码。",
+    "source": {
+      "_doc": "源文件阈值：这些文件会进入 AI agent 的上下文，按 token 量化（cl100k_base 近似，面向通用模型）。需卡紧",
+      "themeJson": {
+        "limit": 2500,
+        "unit": "tokens",
+        "description": "单个 theme.json 的 token 上限。含主题元数据 + 设计 tokens，膨胀意味着 tokens 失控"
+      },
+      "patternTsx": {
+        "limit": 4000,
+        "unit": "tokens",
+        "description": "单个 patterns/*.tsx 的 token 上限。进 AI 上下文的代码模板，比 tokens 更长合理"
+      },
+      "standardMd": {
+        "limit": 2500,
+        "unit": "tokens",
+        "description": "单个 standards/*.md 的 token 上限。设计规范，过长说明在堆砌"
+      },
+      "themeContextTotal": {
+        "limit": 15000,
+        "unit": "tokens",
+        "description": "单主题上下文总和上限 = theme.json + 所有 tsx + 所有 md 的 token 总数。即 AI 最坏情况下完整加载一个主题的上下文成本"
+      },
+      "summaryJson": {
+        "limit": 16000,
+        "unit": "tokens",
+        "description": "themes-summary.json 的 token 上限。Phase 1 场景识别每次必读，按约 240 token/主题估算 → 约 65 主题天花板"
+      }
+    },
+    "output": {
+      "_doc": "编译产物阈值：不进 AI 上下文，仅展示/传输用，按字节量化，防失控即可",
+      "patternPreviewHtml": {
+        "limit": 2097152,
+        "unit": "bytes (2MB)",
+        "description": "单个 pattern-preview HTML 上限。防 antd 全量内联等导致单文件失控"
+      },
+      "previewImage": {
+        "limit": 4194304,
+        "unit": "bytes (4MB)",
+        "description": "单张预览图上限。防未压缩大图撑爆 GitHub Pages 仓库"
+      },
+      "themeZip": {
+        "limit": 2097152,
+        "unit": "bytes (2MB)",
+        "description": "单个主题 zip 安装包上限（含 theme.json + patterns + standards + assets，不含 previews）。卡单主题下载包总量，与 assetFile 512KB 协调：单文件防失控，总量防数量累积"
+      },
+      "assetFile": {
+        "limit": 524288,
+        "unit": "bytes (512KB)",
+        "description": "单个 assets 物料文件上限（icons/illustrations/fragments）。防未压缩插画/大图撑大 zip 与仓库"
+      }
+    }
   }
 }

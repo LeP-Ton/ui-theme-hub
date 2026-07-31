@@ -173,7 +173,8 @@ tokens
   "sceneLabels": {
     "c-end": "C端",
     "enterprise": "企业级",
-    "game": "游戏"
+    "game": "游戏",
+    "presentation": "演讲"
   }
 }
 ```
@@ -187,6 +188,87 @@ tokens
 **新增场景**：只需在 `theme.config.json` 的 `sceneLabels` 中加一行，前端自动生效。
 
 **未映射场景**：构建时输出警告 `⚠️ scene "xxx" 未配置中文映射`，前端 fallback 显示英文 key。
+
+---
+
+## 大小限制配置
+
+为防止主题无限膨胀，构建时会对**上下文消耗**和**文件大小**做硬门禁，超限即 `fail build`（退出码 1，阻止入库）。阈值集中配置在 `theme.config.json` 的 `sizeLimits` 字段。
+
+> 📖 **设计取舍**：为什么 source 组用 token、output 组用字节？为什么用 cl100k 近似而非精确计数？为什么不用文件大小做代理？完整决策依据见 [上下文&体积限制方案分析](docs-design/context-volume-limits-analysis.md)。
+
+### 评估依据与量化维度
+
+阈值依据 ui-design-skill 的真实上下文消费链路（详见 [ui-design-skill/SKILL.md](https://github.com/LeP-Ton/ui-design-skill)）：
+
+- **Phase 1 场景识别**：远程读 `themes-summary.json`（每次必读）→ 决定主题总数上限
+- **Phase 2 主题加载**：下载 zip 解压到本地后，按需读 `theme.json` / `patterns/*.tsx` / `standards/*.md`
+
+因此阈值分两组，且**两组用不同的量化维度**：
+
+| 组 | 量化维度 | 理由 |
+|----|---------|------|
+| **source**（进 AI 上下文） | **token 数** | 这些文件会被 AI agent 读取，token 才是真实的上下文消耗。用字节数做代理会失真——同样 12KB，重复内容仅 ~2500 token，多样化内容可达 ~40000 token |
+| **output**（编译产物） | **字节数** | 图片/HTML/zip 是传输与存储成本，不进上下文。图片的 token 数没有意义，字节才是对的维度 |
+
+> **token 计数说明**：使用 `gpt-tokenizer` 的 `cl100k_base` 分词器估算 token 数。本系统面向通用 AI agent 与模型，不绑定特定模型；cl100k_base 是主流 BPE 分词器之一，对各模型的 token 数都能给出合理的数量级估算（不同模型实际分词器略有差异，故为**近似值**，用于防膨胀门禁足够）。对 DeepSeek/GLM 等中文优化分词器，实际 token 数可能比估算值高 10-25%，阈值已留 1.7×~2.6× 余量覆盖。详细取舍见 [方法论](docs-design/context-volume-limits-analysis.md)。
+
+### source 组（进 AI 上下文，按 token 量化）
+
+| 字段 | 默认阈值 | 现状最大 | 说明 |
+|------|---------|---------|------|
+| `themeJson` | 2500 tokens | 1275 | 单个 `theme.json` 的 token 上限。含元数据 + tokens |
+| `patternTsx` | 4000 tokens | 2302 | 单个 `patterns/*.tsx` 的 token 上限。进上下文的代码模板 |
+| `standardMd` | 2500 tokens | 1217 | 单个 `standards/*.md` 的 token 上限。设计规范 |
+| `themeContextTotal` | 15000 tokens | 5847 | 单主题上下文总和 = `theme.json` + 所有 `tsx` + 所有 `md` 的 token 总数。即 AI 最坏情况下完整加载一个主题的成本 |
+| `summaryJson` | 16000 tokens | 1189 | `themes-summary.json` 的 token 上限。Phase 1 必读，按约 240 token/主题估算 → 约 65 主题天花板 |
+
+### output 组（编译产物，不进上下文，按字节量化）
+
+| 字段 | 默认阈值 | 说明 |
+|------|---------|------|
+| `patternPreviewHtml` | 2MB | 单个 pattern-preview HTML 上限。防 antd 全量内联等导致单文件失控 |
+| `previewImage` | 4MB | 单张预览图上限。防未压缩大图撑爆 GitHub Pages 仓库 |
+| `themeZip` | 2MB | 单个主题 zip 安装包上限（含 theme.json + patterns + standards + assets，不含 previews）。卡单主题下载包总量，与 assetFile 512KB 协调：单文件防失控，总量防数量累积 |
+| `assetFile` | 512KB | 单个 assets 物料文件上限（icons/illustrations/fragments）。防未压缩插画/大图撑大 zip 与仓库 |
+
+### 配置写法
+
+阈值支持两种写法。**推荐用对象写法**，可附带 `unit`/`description` 让配置自解释（JSON 不支持注释，用说明字段代替）。`unit` 含 `token` 字样时按 token 维度计量，否则按字节：
+
+```json
+{
+  "sizeLimits": {
+    "source": {
+      "themeJson": {
+        "limit": 2500,
+        "unit": "tokens",
+        "description": "单个 theme.json 的 token 上限"
+      },
+      "patternTsx": { "limit": 4000, "unit": "tokens", "description": "单个 patterns/*.tsx 的 token 上限" }
+    },
+    "output": {
+      "previewImage": { "limit": 4194304, "unit": "bytes (4MB)", "description": "单张预览图上限" }
+    }
+  }
+}
+```
+
+也兼容简化的数字写法（默认按字节维度）：
+
+```json
+{ "sizeLimits": { "output": { "previewImage": 4194304 } } }
+```
+
+> `_doc` 字段（如 `sizeLimits._doc`、`source._doc`）是纯说明文字，构建时自动跳过，不影响校验。
+
+### 超限行为
+
+- 构建过程中所有超限项实时收集，**一次构建暴露全部问题**（不因第一个超限就中断，避免反复试错）
+- 构建末尾汇总：若有任一超限 → 打印明细（source 项显示 `xxx tokens > yyy tokens`，output 项显示 `xxKB > yyKB`）+ 修复指引 + `process.exit(1)`
+- 修复指引按超限类型给出：源文件超限 → 精简 tokens/模板/规范或拆分多文件；编译产物超限 → 检查 antd 是否全量内联、图片是否未压缩
+
+**调整阈值**：只改 `theme.config.json` 的 `sizeLimits`，无需改代码。默认阈值按现状最大值留 1.7×~2.6× 余量设定，现有主题全部通过。
 
 ---
 
@@ -207,6 +289,7 @@ node scripts/build-index.js
 5. 生成 `docs/themes-summary.json`（轻量索引）
 6. 生成 `docs/themes/{dir}.json`（单主题详情）
 7. 生成 `docs/packages/{dir}.zip`（下载包）
+8. 大小评估汇总：编译全程累计超限项，若有任一超限则 `fail build`（详见[大小限制配置](#大小限制配置)）
 
 ### 校验规则
 
@@ -273,7 +356,7 @@ detail.html?theme=boss-theme-blue&installed=1
 2. 添加 `theme.json`（必填：name / version / description / author / scene / tags）
 3. 添加 `patterns/pages/` 下至少 1 个 `.tsx` 页面模板
 4. 如使用了新场景，在 `theme.config.json` 的 `sceneLabels` 中添加映射
-5. 运行 `node scripts/build-index.js` 确认校验通过
+5. 运行 `node scripts/build-index.js` 确认校验通过（含格式校验 + 大小评估，超限会 fail build）
 6. 提交 PR
 
 ### 开发 Pattern .tsx

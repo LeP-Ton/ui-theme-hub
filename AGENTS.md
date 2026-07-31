@@ -43,6 +43,38 @@ theme.config.json          # 全局配置（sceneLabels 等集中维护点）
 5. 生成 `docs/themes-summary.json`（轻量索引：含 sceneLabels 映射 + dir/name/scene/tags/description/主色等字段）
 6. 生成 `docs/themes/{dir}.json`（单主题全量数据，供详情页按需加载）
 7. 生成各主题 zip 包到 `docs/packages/`
+8. 大小评估汇总：编译全程累计 `sizeViolations`，若有超限则 `process.exit(1)` 中断构建
+
+## 大小评估机制（防止主题无限膨胀）
+部署在 GitHub Pages，主题数量持续增长，编译期对上下文消耗与文件大小做硬门禁。
+
+**评估依据**（ui-design-skill 真实上下文消费链路，见 ui-design-skill/SKILL.md）：
+- Phase 1 场景识别：远程读 `themes-summary.json`（每次必读）→ 决定主题总数上限
+- Phase 2 主题加载：下载 zip 解压到本地后，按需读 `theme.json` / `patterns/*.tsx` / `standards/*.md`
+- 故源文件（进 AI 上下文）卡紧，编译产物（展示/传输用）防失控即可
+
+**双量化维度**（关键设计）：
+- **source 组用 token 数**：进 AI 上下文的文件，token 才是真实上下文消耗。用 `gpt-tokenizer`（cl100k_base）计数。本系统面向通用 AI agent，不绑定特定模型；不同模型分词器略有差异，故为近似值，数量级准确。
+- **output 组用字节数**：图片/HTML/zip 是传输存储成本，不进上下文，token 数对图片无意义。
+- 同样 12KB 文件，重复内容仅 ~2500 token，多样化内容可达 ~40000 token——token 量化比字节更准确反映上下文消耗。
+
+**阈值配置**：集中在 `theme.config.json` 的 `sizeLimits` 字段。对象写法 `{limit, unit, description}` 中 `unit` 含 `token` → token 维度，否则字节维度；兼容数字写法（默认字节）。`_doc` 字段为纯说明，构建时跳过。构建脚本通过 `resolveLimit`/`resolveLimitGroup` 解析，`assertBudget`（token/字节双模式）处理 source，`assertBytes` 处理 output。
+
+| 对象 | 阈值 | 维度 | 字段 |
+|------|------|------|------|
+| theme.json | 2500 | tokens | `source.themeJson` |
+| patterns/*.tsx | 4000 | tokens | `source.patternTsx` |
+| standards/*.md | 2500 | tokens | `source.standardMd` |
+| 单主题上下文总和 | 15000 | tokens | `source.themeContextTotal` |
+| themes-summary.json | 16000 | tokens | `source.summaryJson` |
+| pattern-preview HTML | 2M | bytes | `output.patternPreviewHtml` |
+| 预览图 | 4M | bytes | `output.previewImage` |
+| zip 包 | 2M | bytes | `output.themeZip` | 卡单主题下载包总量（含 assets，不含 previews），与 assetFile 512KB 协调 |
+| assets 单文件 | 512K | bytes | `output.assetFile` |
+
+**超限处理**：不立即抛错，统一收集到 `sizeViolations`，main() 末尾判定，有任一超限即 fail build（退出码 1）并打印修复指引（source 项显示 tokens，output 项显示 KB）。阈值按现状最大值留 1.7×~2.6× 余量设定，现状 5 主题全部通过。
+
+**新增字段**：主题对象新增 `standards`（此前构建未扫描）与 `contextTokens`（单主题上下文 token 数，原 `contextBytes` 已重命名），透传进 detail.json，对前端透明。
 
 ## 主题标识体系
 - **dir（目录名）**：唯一标识，用于 URL 路由、zip 文件名、详情 JSON 文件名、installed 参数匹配

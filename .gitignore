@@ -1,2 +1,4 @@
 .history
 node_modules
+.tmp-build
+.tmp-package

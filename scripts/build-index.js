@@ -12,6 +12,20 @@ const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 const esbuild = require('esbuild');
+/* gpt-tokenizer 使用 cl100k_base 分词器估算 token 数。本系统面向通用 AI agent，不绑定特定模型；
+ * cl100k_base 是主流 BPE 分词器之一，各模型 token 数量级估算接近。仅用于 source 组（进 AI 上下文的
+ * 文件）的上下文消耗量化；output 组仍用字节数 */
+const { encode } = require('gpt-tokenizer');
+
+/**
+ * 估算文本的 token 数（cl100k_base 近似）
+ * 注意：不同模型实际分词器略有差异，此为近似值，数量级准确，用于防膨胀门禁足够
+ * @param {string} text
+ * @returns {number}
+ */
+function countTokens(text) {
+  return encode(text).length;
+}
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 const DOCS_DIR = path.join(REPO_ROOT, 'docs');
@@ -113,6 +127,110 @@ const config = fs.existsSync(CONFIG_PATH)
   : {};
 const SCENE_LABELS = config.sceneLabels || {};
 
+/* ========== 大小评估（防止主题无限膨胀） ==========
+ *
+ * 设计依据：ui-design-skill 的真实上下文消费链路
+ * - Phase 1 场景识别：远程读 themes-summary.json（每次必读）→ 决定主题总数上限
+ * - Phase 2 主题加载：下载 zip 解压到本地后，按需读 theme.json / patterns/*.tsx / standards/*.md
+ *
+ * 量化维度（关键设计）：
+ * - source 组（进 AI 上下文）：用 token 数量化（cl100k_base 近似），名实相符地反映上下文消耗
+ * - output 组（编译产物，不进上下文）：用字节数量化，反映传输/存储成本（图片/HTML 的 token 数无意义）
+ *
+ * 超限处理：统一收集到 violations，main() 结束时若有任何 violation → process.exit(1) 中断构建
+ */
+const SIZE_LIMITS = config.sizeLimits || {};
+
+/**
+ * 解析单个阈值：兼容两种配置写法
+ * - 数字写法（向后兼容）：8192（默认按字节）
+ * - 对象写法（带注释，推荐）：{ limit: 2500, unit: "tokens", description: "..." }
+ *   unit 含 "token" → token 维度；否则按字节维度
+ */
+function resolveLimit(entry) {
+  if (entry == null) return undefined;
+  if (typeof entry === 'number') return { limit: entry, isTokens: false };
+  if (typeof entry === 'object' && typeof entry.limit === 'number') {
+    const unitStr = typeof entry.unit === 'string' ? entry.unit.toLowerCase() : '';
+    return { limit: entry.limit, isTokens: unitStr.includes('token') };
+  }
+  return undefined;
+}
+
+/**
+ * 把一组阈值配置预处理成 { 字段: {limit, isTokens} } 形式
+ * 跳过 _doc 等纯说明字段
+ */
+function resolveLimitGroup(group) {
+  const out = {};
+  for (const [key, val] of Object.entries(group || {})) {
+    if (key.startsWith('_')) continue; /* _doc 等注释字段跳过 */
+    const resolved = resolveLimit(val);
+    if (resolved != null) out[key] = resolved;
+  }
+  return out;
+}
+
+const SOURCE_LIMITS = resolveLimitGroup(SIZE_LIMITS.source);
+const OUTPUT_LIMITS = resolveLimitGroup(SIZE_LIMITS.output);
+
+/* 违规收集器：构建过程中累计所有超限项，最后统一判定是否 fail build */
+const sizeViolations = [];
+
+/**
+ * 大小/上下文断言：超限则记入 violations（不立即抛错，保证一次构建暴露全部问题）
+ * 根据 limit.isTokens 选择量化维度：token 维度用 countTokens 计数，字节维度用 Buffer.byteLength
+ *
+ * @param {string} filePath   - 文件路径，用于报错定位
+ * @param {string} content    - 文件文本内容（token 维度需要；字节维度也用其编码长度）
+ * @param {{limit, isTokens}} limit - 解析后的阈值对象
+ * @param {string} label      - 人类可读的文件类别描述（如"主题 JSON"/"Pattern 模板"）
+ */
+function assertBudget(filePath, content, limit, label) {
+  if (limit == null || typeof limit.limit !== 'number') return; /* 未配置上限则跳过 */
+  const usage = limit.isTokens ? countTokens(content) : Buffer.byteLength(content);
+  if (usage <= limit.limit) return;
+  /* 按维度选择展示单位 */
+  const usageStr = limit.isTokens ? `${usage} tokens` : `${(usage / 1024).toFixed(1)}KB`;
+  const limitStr = limit.isTokens
+    ? `${limit.limit} tokens`
+    : `${(limit.limit / 1024).toFixed(1)}KB`;
+  sizeViolations.push({
+    filePath,
+    label,
+    usage,
+    limit: limit.limit,
+    isTokens: limit.isTokens,
+    message: `${label}超限: ${filePath} (${usageStr} > ${limitStr} 上限)`,
+  });
+  console.error(`   ✗ ${label}超限: ${usageStr} > ${limitStr}  ${filePath}`);
+}
+
+/**
+ * 字节断言：专用于 output 组（图片/zip 等二进制产物，无文本内容，只有文件大小）
+ *
+ * @param {string} filePath - 文件路径
+ * @param {number} size     - 文件字节数
+ * @param {{limit, isTokens}} limit - 解析后的阈值对象（output 组应为字节维度）
+ * @param {string} label    - 文件类别描述
+ */
+function assertBytes(filePath, size, limit, label) {
+  if (limit == null || typeof limit.limit !== 'number') return;
+  if (limit.isTokens) return; /* output 组不应配 token 维度，防御性跳过 */
+  if (size <= limit.limit) return;
+  const sizeKb = (size / 1024).toFixed(1);
+  const limitKb = (limit.limit / 1024).toFixed(1);
+  sizeViolations.push({
+    filePath,
+    label,
+    usage: size,
+    limit: limit.limit,
+    isTokens: false,
+    message: `${label}超限: ${filePath} (${sizeKb}KB > ${limitKb}KB 上限)`,
+  });
+  console.error(`   ✗ ${label}超限: ${sizeKb}KB > ${limitKb}KB  ${filePath}`);
+}
+
 /* ========== 主题格式校验 ========== */
 
 /**
@@ -213,7 +331,10 @@ async function main() {
     const themeJsonPath = path.join(THEMES_DIR, entry.name, 'theme.json');
     if (!fs.existsSync(themeJsonPath)) continue;
 
-    const themeData = JSON.parse(fs.readFileSync(themeJsonPath, 'utf-8'));
+    const themeJsonRaw = fs.readFileSync(themeJsonPath, 'utf-8');
+    /* 评估 theme.json 上下文消耗（进 AI 上下文的核心文件，按 token 量化） */
+    assertBudget(themeJsonPath, themeJsonRaw, SOURCE_LIMITS.themeJson, '主题 JSON');
+    const themeData = JSON.parse(themeJsonRaw);
 
     /* 统一校验：格式 + 唯一性 */
     const validation = validateTheme(themeData, entry.name);
@@ -244,10 +365,11 @@ async function main() {
       for (const file of fs.readdirSync(previewDir)) {
         const ext = path.extname(file).toLowerCase();
         if (IMAGE_EXTS.has(ext)) {
-          fs.copyFileSync(
-            path.join(previewDir, file),
-            path.join(themeOutputDir, file)
-          );
+          const srcImgPath = path.join(previewDir, file);
+          const destImgPath = path.join(themeOutputDir, file);
+          fs.copyFileSync(srcImgPath, destImgPath);
+          /* 评估预览图大小（展示用，不进 AI 上下文，防未压缩大图撑爆仓库） */
+          assertBytes(srcImgPath, fs.statSync(srcImgPath).size, OUTPUT_LIMITS.previewImage, '预览图');
           previews.push(`theme-previews/${entry.name}/${file}`);
         }
       }
@@ -269,6 +391,8 @@ async function main() {
         const name = path.basename(file, TSX_EXT);
         const tsxPath = path.join(dir, file);
         const sourceCode = fs.readFileSync(tsxPath, 'utf-8');
+        /* 评估 pattern 源文件上下文消耗（进 AI 上下文的代码模板，按 token 量化） */
+        assertBudget(tsxPath, sourceCode, SOURCE_LIMITS.patternTsx, 'Pattern 模板');
 
         let previewPath = null;
         try {
@@ -277,6 +401,8 @@ async function main() {
           fs.mkdirSync(outputDir, { recursive: true });
           const outputPath = path.join(outputDir, `${name}.html`);
           fs.writeFileSync(outputPath, html);
+          /* 评估编译产物 HTML 大小（展示用，不进 AI 上下文，防 antd 全量内联等失控，按字节量化） */
+          assertBytes(outputPath, Buffer.byteLength(html), OUTPUT_LIMITS.patternPreviewHtml, 'Pattern 预览 HTML');
           previewPath = `pattern-previews/${entry.name}/${key}/${name}.html`;
           console.log(`  ✓ ${key === 'pages' ? '页面' : '组件'}: ${name}`);
         } catch (err) {
@@ -292,11 +418,59 @@ async function main() {
       }
     }
 
+    /* 扫描 standards/ 目录中的设计规范 Markdown（打包进 zip 供 AI 按需读取） */
+    const standards = [];
+    const standardsDir = path.join(THEMES_DIR, entry.name, 'standards');
+    if (fs.existsSync(standardsDir)) {
+      for (const file of fs.readdirSync(standardsDir).sort()) {
+        if (path.extname(file).toLowerCase() !== '.md') continue;
+        const mdPath = path.join(standardsDir, file);
+        const mdContent = fs.readFileSync(mdPath, 'utf-8');
+        /* 评估 standards 源文件上下文消耗（进 AI 上下文的设计规范，按 token 量化） */
+        assertBudget(mdPath, mdContent, SOURCE_LIMITS.standardMd, '设计规范');
+        standards.push({ name: path.basename(file, '.md'), file, source: mdContent });
+      }
+    }
+
+    /* 扫描 assets/ 物料目录（icons/illustrations/fragments），评估每个文件大小
+     * assets 不进 AI 上下文，但会打进 zip 并部署到仓库，单文件过大易撑大下载与仓库 */
+    const assetsDir = path.join(THEMES_DIR, entry.name, 'assets');
+    if (fs.existsSync(assetsDir)) {
+      const scanAssets = (dir) => {
+        for (const file of fs.readdirSync(dir, { withFileTypes: true }).sort()) {
+          const fullPath = path.join(dir, file.name);
+          if (file.isDirectory()) {
+            scanAssets(fullPath); /* 递归子目录：icons/illustrations/fragments */
+          } else {
+            assertBytes(fullPath, fs.statSync(fullPath).size, OUTPUT_LIMITS.assetFile, '物料文件');
+          }
+        }
+      };
+      scanAssets(assetsDir);
+    }
+
+    /* 评估单主题上下文总和：theme.json + 所有 patterns/*.tsx + 所有 standards/*.md 的 token 总数
+     * 即 ui-design-skill 最坏情况下完整加载一个主题时占用的上下文 token 数（cl100k 近似）
+     * 拼接后整体编码，比单文件 token 相加略准（跨文件边界分词差异可忽略） */
+    const contextContent =
+      themeJsonRaw +
+      [...patterns.pages, ...patterns.components].map((p) => p.source).join('') +
+      standards.map((s) => s.source).join('');
+    const contextTokens = countTokens(contextContent);
+    assertBudget(
+      path.join(THEMES_DIR, entry.name),
+      contextContent,
+      SOURCE_LIMITS.themeContextTotal,
+      '单主题上下文总和'
+    );
+
     themes.push({
       dir: entry.name,
       ...themeData,
       previews,
       patterns,
+      standards,
+      contextTokens,
     });
   }
 
@@ -337,7 +511,10 @@ async function main() {
     themes: summary,
   };
   const summaryPath = path.join(DOCS_DIR, 'themes-summary.json');
-  fs.writeFileSync(summaryPath, JSON.stringify(summaryOutput, null, 2) + '\n');
+  const summaryContent = JSON.stringify(summaryOutput, null, 2) + '\n';
+  fs.writeFileSync(summaryPath, summaryContent);
+  /* 评估 themes-summary.json 上下文消耗（Phase 1 场景识别每次必读，决定主题总数天花板，按 token 量化） */
+  assertBudget(summaryPath, summaryContent, SOURCE_LIMITS.summaryJson, '主题轻量索引');
 
   /* ========== 生成各主题 detail.json（单主题全量数据，供详情页按需加载） ========== */
   const DETAILS_DIR = path.join(DOCS_DIR, 'themes');
@@ -389,7 +566,10 @@ async function main() {
     const zipPath = path.join(PACKAGES_DIR, `${themeId}.zip`);
     try {
       execSync(`cd "${tmpDir}" && zip -r -q "${zipPath}" .`, { stdio: 'pipe' });
-      const size = (fs.statSync(zipPath).size / 1024).toFixed(0);
+      const zipSize = fs.statSync(zipPath).size;
+      /* 评估主题安装包大小（传输用，不进 AI 上下文，防 assets 等物料撑大下载，按字节量化） */
+      assertBytes(zipPath, zipSize, OUTPUT_LIMITS.themeZip, '主题安装包');
+      const size = (zipSize / 1024).toFixed(0);
       console.log(`  📦 ${themeId}.zip (${size} KB)`);
     } catch (err) {
       console.error(`  ✗ 打包 ${themeId} 失败:`, err.message);
@@ -400,6 +580,19 @@ async function main() {
   }
 
   console.log(`\n✅ 已生成 ${themes.length} 个主题包 → ${PACKAGES_DIR}`);
+
+  /* ========== 大小评估汇总：若有任何超限，中断构建 ==========
+   * 违规已在编译过程中实时打印，这里做最终判定并给出修复指引。
+   * 这是防止主题无限膨胀的硬门禁：超限即 fail build，阻止入库。
+   */
+  if (sizeViolations.length > 0) {
+    console.error(`\n🚫 大小评估未通过：${sizeViolations.length} 项超限`);
+    console.error('   源文件超限 → 精简 tokens/模板/规范，或拆分多文件');
+    console.error('   编译产物超限 → 检查 antd 是否全量内联、图片是否未压缩');
+    console.error('   阈值可在 theme.config.json 的 sizeLimits 中调整');
+    process.exit(1);
+  }
+  console.log(`\n✅ 大小评估通过：源文件 + 编译产物均在阈值内`);
 }
 
 main().catch(err => {

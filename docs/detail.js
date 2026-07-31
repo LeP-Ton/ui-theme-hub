@@ -97,6 +97,11 @@
       ? renderPatternsSection(theme.patterns)
       : '';
 
+    /* standards 区块（设计规范 Markdown，可展开查看原文） */
+    const standardsSection = theme.standards
+      ? renderStandardsSection(theme.standards)
+      : '';
+
     $main.innerHTML = `
       <div class="detail-hero">
         ${previewArea}
@@ -118,6 +123,7 @@
       </div>
       ${tokenSections.join('')}
       ${patternsSection}
+      ${standardsSection}
     `;
 
     /* 绑定折叠事件 */
@@ -386,6 +392,43 @@
         <div class="token-section-body">
           ${pagesHTML}
           ${componentsHTML}
+        </div>
+      </div>
+    `;
+  }
+
+  /* 渲染设计规范（standards）区块：每个规范文件可展开查看 Markdown 原文
+   * 复用 pattern-item 的折叠交互（bindPatternModeSwitch 绑定 .pattern-item-header），
+   * 但不需要预览/源码切换，仅展示源码 */
+  function renderStandardsSection(standards) {
+    if (!standards || standards.length === 0) return '';
+
+    const list = standards.map((item, idx) => `
+      <div class="pattern-item" data-group="standards" data-index="${idx}" data-mode="source">
+        <div class="pattern-item-header">
+          <span class="pattern-item-name">${escapeHTML(formatPatternName(item.name))}</span>
+          <span class="pattern-item-file">${escapeHTML(item.file)}</span>
+          <span class="pattern-item-toggle">展开</span>
+        </div>
+        <div class="pattern-item-content" style="display:none;">
+          <div class="pattern-source-container">
+            <pre><code>${escapeHTML(item.source)}</code></pre>
+          </div>
+        </div>
+      </div>
+    `).join('');
+
+    return `
+      <div class="token-section">
+        <div class="token-section-title">
+          设计规范 (Standards)
+          <span class="toggle-icon">▼</span>
+        </div>
+        <div class="token-section-body">
+          <div class="pattern-group">
+            <h3 class="pattern-group-title">规范文档 (${standards.length})</h3>
+            <div class="pattern-list">${list}</div>
+          </div>
         </div>
       </div>
     `;

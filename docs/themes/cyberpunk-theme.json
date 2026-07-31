@@ -169,5 +169,13 @@
         "preview": "pattern-previews/cyberpunk-theme/components/character-panel.html"
       }
     ]
-  }
+  },
+  "standards": [
+    {
+      "name": "game",
+      "file": "game.md",
+      "source": "# 游戏 UI 专属规范\n\n## 布局\n\n### 游戏 HUD 结构\n\n```\n┌──────────────────────────────────────────┐\n│ 顶部状态栏（血条/蓝条/等级）             │\n├──────────────────────────────────────────┤\n│                                          │\n│          游戏画面区域                     │\n│                                          │\n├──────────────────────────────────────────┤\n│ 技能栏（底部居中）                       │\n│ [技能1][技能2][技能3][技能4][技能5]      │\n├──────────────────────────────────────────┤\n│ 小地图（右下角）  │ 背包快捷（右下）     │\n└──────────────────────────────────────────┘\n```\n\n### 推荐技术栈\n\nReact/Canvas + CSS（特殊布局，动效丰富）\n\n## 视觉风格\n\n- 暗色背景为主\n- 边框发光效果（box-shadow glow）\n- 品质色彩编码：普通=白，优秀=绿，稀有=蓝，史诗=紫，传说=橙\n- 图标风格：写实或卡通，与游戏美术一致\n- 字体：粗体、有力量感的字体\n\n## 组件规范\n\n### 技能栏\n\n- 技能槽位：56x56px\n- 间距：4px\n- 冷却动画：扇形遮罩\n- 快捷键标注：左上角小字\n\n### 背包栏\n\n- 网格尺寸：64x64px\n- 间距：4px\n- 品质边框色：按品质色彩编码\n- 拖拽交互：拖动到装备槽或丢弃区\n\n### 状态条\n\n- 血条：红色渐变，12px 高\n- 蓝条：蓝色渐变，8px 高\n- 经验条：金色渐变，4px 高\n- 低值警告：血量 < 25% 时闪烁\n\n### 弹窗面板\n\n- 半透明暗色遮罩\n- 面板边框发光\n- 关闭按钮在右上角\n- Tab 切换不同子面板\n\n## 交互规范\n\n- 拖拽：背包物品拖拽\n- 右键：上下文菜单\n- 双击：快速使用/装备\n- 悬浮提示：物品详情 Tooltip\n- 快捷键：技能和背包快捷键\n\n## 动效规范\n\n- 冷却动画：扇形展开\n- 伤害数字：上浮淡出\n- 升级：光效爆发\n- 装备：品质光效\n- 动效可关闭（性能模式）\n\n## 页面类型\n\n| 页面 | 特征 | 详见 |\n|------|------|------|\n| 游戏 HUD | 状态+技能+背包 | `templates/scenes/game/pages/game-hud.md` |\n\n## 文字动画（PoemTextAnimator）\n\n主题依赖 `poem` 文字动画库，用于游戏内逐字/逐行动画效果（剧情对话、技能名称、伤害数字、物品描述等）。\n\n### 安装\n\n```bash\n# 从仓库克隆到项目 libs 目录\ngit clone https://github.com/LeP-Ton/poem.git src/libs/poem\n```\n\n```tsx\n// 引入\nimport { createTextAnimator, splitTextToSpans } from '@/libs/poem/index.js';\nimport '@/libs/poem/index.css';\n```\n\n### 核心 API\n\n**创建实例**：\n\n```tsx\nconst animator = createTextAnimator('#dialog-container', {\n  animationClass: 'one',    // 动画预设名（one ~ seven）\n  charDelay: 0.05,          // 字符间延迟（秒），默认 0.05\n  lineInterval: 1000,       // 逐行间隔（毫秒），默认 1000\n});\n```\n\n**渲染方法**：\n\n```tsx\n// 渲染单行文字（逐字动画）\nanimator.render('勇敢的冒险者，欢迎来到黑暗大陆');\n\n// 逐行渲染（剧情对话场景）\nawait animator.renderLines([\n  '第一章：黑暗降临',\n  '远方的地平线被血色染红',\n  '你握紧了手中的利刃...',\n]);\n\n// 销毁实例\nanimator.destroy();\n```\n\n**工具函数**：\n\n```tsx\n// 将文本拆分为带延迟的 span 元素（用于自定义容器）\nsplitTextToSpans(targetElement, '技能已解锁', 0.05);\n```\n\n### 游戏场景使用规范\n\n| 场景 | 推荐预设 | charDelay | 示例 |\n|------|---------|-----------|------|\n| 剧情对话 | `one` | 0.05 | NPC 对话逐字显示 |\n| 技能名称 | `three` | 0.03 | 技能解锁时名称闪现 |\n| 物品描述 | `two` | 0.04 | 物品详情逐字展示 |\n| 标题/横幅 | `five` | 0.08 | 章节/场景标题 |\n\n### 注意事项\n\n- 动画实例使用完毕后需调用 `destroy()` 释放资源\n- 性能模式下（`motion.enabled: false`）跳过文字动画，直接渲染完整文本\n- `animationClasses` 数组可按行循环分配不同动画预设\n- `animationResolver` 可自定义每行动画类名\n"
+    }
+  ],
+  "contextTokens": 5847
 }

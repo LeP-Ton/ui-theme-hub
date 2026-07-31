@@ -1,6 +1,10 @@
 # AgentDocs 索引
 
+## 设计决策文档（长期参考）
+`../docs-design/context-volume-limits-analysis.md` - 上下文&体积限制方案分析：为什么 source 用 token / output 用字节、为什么 cl100k 近似、为什么不回退字节。README「大小限制配置」章节引用。
+
 ## 当前变更文档
+`workflow/20260731103000-build-size-limits.md` - 构建期大小评估：编译时评估上下文占用与单文件大小，超限 fail build 防止主题无限膨胀
 `workflow/20260723223800-extract-ai-ppt-theme.md` - 提炼 ai-ppt 项目为一个 PPT 主题（AI 演示稿，scene=presentation）
 `workflow/20260722143646-readme-full-rewrite.md` - README 全面重写
 `workflow/20260722120352-themes-dir-migration.md` - 主题目录迁移到 themes/ 子目录（排除法→包含法）
