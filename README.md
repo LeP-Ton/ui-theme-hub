@@ -172,13 +172,15 @@ tokens
 ```json
 {
   "sceneLabels": {
-    "b2c": "C端",
-    "b2b": "B端",
-    "game": "游戏",
-    "presentation": "演示"
+    "b2c": { "label": "C端", "color": "#fa8c16" },
+    "b2b": { "label": "B端", "color": "#1677ff" },
+    "game": { "label": "游戏", "color": "#722ed1" },
+    "presentation": { "label": "演示", "color": "#ff6a3d" }
   }
 }
 ```
+
+`sceneLabels` 值为 `{ label, color }` 对象：`label` 是中文显示名，`color` 是场景标签专属色。前端（app.js / detail.js）启动时读取并动态注入为 CSS 变量，**新增场景只需在此加一行，无需改 CSS**。
 
 **工作流程**：
 

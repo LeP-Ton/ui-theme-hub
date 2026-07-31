@@ -13,10 +13,9 @@
   --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
   --shadow-hover: 0 8px 24px rgba(0,0,0,0.12);
 
-  /* 场景色彩映射 */
-  --scene-c-end: #fa8c16;
-  --scene-enterprise: #1677ff;
-  --scene-game: #722ed1;
+  /* 场景色彩：由 app.js injectSceneColors() 从 sceneLabels 动态注入 --scene-{key}。
+     此处仅给一个兜底默认色，避免 JS 未执行时标签完全无色。颜色唯一维护点为 theme.config.json */
+  --scene-fallback: #8c8c8c;
 }
 
 /* ========== 基础重置 ========== */
@@ -170,10 +169,8 @@ body {
   color: #fff;
 }
 
-/* scene 标签激活时使用场景专属色彩 */
-.filter-chip.scene-chip.active[data-scene="c-end"] { background: var(--scene-c-end); border-color: var(--scene-c-end); }
-.filter-chip.scene-chip.active[data-scene="enterprise"] { background: var(--scene-enterprise); border-color: var(--scene-enterprise); }
-.filter-chip.scene-chip.active[data-scene="game"] { background: var(--scene-game); border-color: var(--scene-game); }
+/* scene 标签激活时使用场景专属色（颜色由 JS 内联 --scene-color 注入，兜底 --scene-fallback） */
+.filter-chip.scene-chip.active { background: var(--scene-color, var(--scene-fallback)); border-color: var(--scene-color, var(--scene-fallback)); }
 
 /* scene 标签左侧色条 */
 .filter-chip.scene-chip::before {
@@ -183,11 +180,8 @@ body {
   border-radius: 50%;
   margin-right: 6px;
   flex-shrink: 0;
+  background: var(--scene-color, var(--scene-fallback));
 }
-
-.filter-chip.scene-chip[data-scene="c-end"]::before { background: var(--scene-c-end); }
-.filter-chip.scene-chip[data-scene="enterprise"]::before { background: var(--scene-enterprise); }
-.filter-chip.scene-chip[data-scene="game"]::before { background: var(--scene-game); }
 
 .filter-chip.scene-chip.active::before { background: #fff; }
 
@@ -380,9 +374,8 @@ body {
   color: #fff;
 }
 
-.card-scene.scene-c-end { background: var(--scene-c-end); }
-.card-scene.scene-enterprise { background: var(--scene-enterprise); }
-.card-scene.scene-game { background: var(--scene-game); }
+/* 卡片场景标签：颜色由 JS 内联 --scene-color 注入，通用规则不再枚举 scene key */
+.card-scene { background: var(--scene-color, var(--scene-fallback)); }
 
 .card-colors {
   display: flex;

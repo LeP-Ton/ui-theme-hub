@@ -245,9 +245,8 @@ body {
   color: #fff;
 }
 
-.detail-scene.scene-c-end { background: #fa8c16; }
-.detail-scene.scene-enterprise { background: #1677ff; }
-.detail-scene.scene-game { background: #722ed1; }
+/* 详情页场景标签：颜色由 JS 内联 --scene-color 注入，与列表页同构 */
+.detail-scene { background: var(--scene-color, var(--scene-fallback)); }
 
 .detail-author {
   font-size: 14px;

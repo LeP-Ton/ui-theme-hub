@@ -497,11 +497,15 @@ async function main() {
     patternComponents: (t.patterns?.components || []).map(p => p.name),
   }));
 
-  /* 检测未映射的 scene 值，输出警告 */
+  /* 检测未映射的 scene 值，输出警告（sceneLabels 值为 {label, color} 对象） */
   const allScenes = [...new Set(themes.map(t => t.scene))];
   for (const scene of allScenes) {
-    if (!SCENE_LABELS[scene]) {
-      console.warn(`⚠️  scene "${scene}" 未在 SCENE_LABELS 中配置中文映射，前端将显示原始值`);
+    const cfg = SCENE_LABELS[scene];
+    if (!cfg || !cfg.label) {
+      console.warn(`⚠️  scene "${scene}" 未在 sceneLabels 中配置 label，前端将显示原始值`);
+    }
+    if (cfg && !cfg.color) {
+      console.warn(`⚠️  scene "${scene}" 未配置 color，前端场景标签将无专属色`);
     }
   }
 

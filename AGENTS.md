@@ -86,12 +86,13 @@ theme.config.json          # 全局配置（sceneLabels 等集中维护点）
 - **弱校验（warnings — 允许入库）**：id 废弃字段、tokens 缺失、patterns 空目录、scene 未映射中文
 
 ## 场景映射体系
-- **theme.config.json**（项目根目录）：全局配置，sceneLabels 为 scene key → 中文显示名的唯一维护点
+- **theme.config.json**（项目根目录）：全局配置，sceneLabels 为 scene key → `{ label, color }` 对象的唯一维护点（label 中文显示名，color 场景标签专属色）
 - 当前场景体系（key 用国际通用术语，中文简洁对仗）：`b2c`(C端) / `b2b`(B端) / `game`(游戏) / `presentation`(演示)。b2c/b2b 按商业模型兜底通用产品，game/presentation 为特殊形态单列
-- 构建脚本读取 theme.config.json，输出 sceneLabels 到 `themes-summary.json`
-- 前端（app.js / detail.js）从数据读取，不再硬编码映射
-- 新增场景只需在 `theme.config.json` 的 `sceneLabels` 加一行，前端自动生效
-- 未映射的 scene 构建时输出警告，前端 fallback 为英文原始值
+- 构建脚本读取 theme.config.json，原样透传 sceneLabels 对象到 `themes-summary.json`
+- 前端（app.js / detail.js）从数据读取 label 与 color：label 渲染中文显示名，color 在启动时动态注入为 CSS 变量并内联到每个场景标签的 `--scene-color`
+- CSS（style.css / detail.css）不再枚举 scene key，统一用 `var(--scene-color, var(--scene-fallback))` 通用规则着色
+- **新增场景只需在 `theme.config.json` 的 `sceneLabels` 加一行 `{ label, color }`，构建后前端自动生效，无需改 CSS**（数据驱动）
+- 未映射 scene 或缺 label/color 构建时输出警告；前端 label 回退为原始值，color 回退为兜底灰色 `--scene-fallback`
 
 ## CSS 处理机制
 CSS 由 .tsx 中的 import 驱动，esbuild css loader 自动提取到 out.css 并内联到 HTML：

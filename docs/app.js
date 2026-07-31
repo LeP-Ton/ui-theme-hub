@@ -3,12 +3,12 @@
  * 负责数据加载、筛选/搜索、卡片渲染
  *
  * URL 参数规范（query string）：
- *   scene=enterprise          按场景筛选
+ *   scene=b2b                 按场景筛选
  *   tags=blue,management      按标签筛选（逗号分隔）
  *   q=搜索词                  搜索回填
  *   installed=apple-theme,boss-theme-blue  已下载主题 ID（逗号分隔）
  *
- * 示例：?scene=enterprise&tags=blue&q=管理&installed=apple-theme,boss-theme-blue
+ * 示例：?scene=b2b&tags=blue&q=管理&installed=apple-theme,boss-theme-blue
  */
 (function () {
   'use strict';
@@ -44,6 +44,7 @@
       return;
     }
 
+    injectSceneColors();
     renderFilterChips();
     parseURLParams();
     bindEvents();
@@ -55,11 +56,14 @@
     const scenes = [...new Set(state.themes.map(t => t.scene))].sort();
     const tags = [...new Set(state.themes.flatMap(t => t.tags))].sort();
 
-    $sceneChips.innerHTML = scenes.map(scene => `
-      <button class="filter-chip scene-chip" data-scene="${scene}" data-type="scene">
+    $sceneChips.innerHTML = scenes.map(scene => {
+      const color = sceneColor(scene);
+      const styleAttr = color ? ` style="--scene-color:${color}"` : '';
+      return `
+      <button class="filter-chip scene-chip" data-scene="${scene}" data-type="scene"${styleAttr}>
         ${sceneLabel(scene)}
-      </button>
-    `).join('');
+      </button>`;
+    }).join('');
 
     $tagChips.innerHTML = tags.map(tag => `
       <button class="filter-chip tag-chip" data-tag="${tag}" data-type="tag">
@@ -68,9 +72,30 @@
     `).join('');
   }
 
-  /* scene 显示名称：从构建产物 sceneLabels 映射，未匹配时回退为原始值 */
+  /* scene 显示名称：从构建产物 sceneLabels 映射（值为 {label, color} 对象），未匹配时回退为原始值 */
   function sceneLabel(scene) {
-    return state.sceneLabels[scene] || scene;
+    return state.sceneLabels[scene]?.label || scene;
+  }
+
+  /* scene 专属色：从 sceneLabels 读取 color，未配置返回 null */
+  function sceneColor(scene) {
+    return state.sceneLabels[scene]?.color || null;
+  }
+
+  /* 将场景颜色动态注入为 CSS 变量（--scene-{key}），实现数据驱动着色，新增场景无需改 CSS */
+  function injectSceneColors() {
+    const entries = Object.entries(state.sceneLabels)
+      .map(([scene, cfg]) => [scene, cfg?.color])
+      .filter(([, color]) => color);
+    if (!entries.length) return;
+    const css = entries.map(([scene, color]) => `--scene-${scene}: ${color};`).join(' ');
+    let $style = document.getElementById('scene-color-vars');
+    if (!$style) {
+      $style = document.createElement('style');
+      $style.id = 'scene-color-vars';
+      document.head.appendChild($style);
+    }
+    $style.textContent = `:root { ${css} }`;
   }
 
   /* ========== 事件绑定 ========== */
@@ -244,8 +269,10 @@
       ? '<span class="installed-badge">已下载</span>'
       : '';
 
-    /* scene 徽章 */
-    const sceneBadge = `<span class="card-scene scene-${theme.scene}">${sceneLabel(theme.scene)}</span>`;
+    /* scene 徽章：内联 --scene-color 供 CSS 通用规则着色，未配置色时 CSS 走兜底 */
+    const sceneColorVar = sceneColor(theme.scene);
+    const sceneStyleAttr = sceneColorVar ? ` style="--scene-color:${sceneColorVar}"` : '';
+    const sceneBadge = `<span class="card-scene scene-${theme.scene}"${sceneStyleAttr}>${sceneLabel(theme.scene)}</span>`;
 
     /* 色彩圆点 */
     const colorDots = [primary, secondary, accent].map(c =>

@@ -10,6 +10,22 @@
   const $main = document.getElementById('detail-main');
   const $pageTitle = document.getElementById('page-title');
 
+  /* 将场景颜色动态注入为 CSS 变量（--scene-{key}），与列表页 app.js 同构，新增场景无需改 CSS */
+  function injectSceneColors(sceneLabels) {
+    const entries = Object.entries(sceneLabels || {})
+      .map(([scene, cfg]) => [scene, cfg?.color])
+      .filter(([, color]) => color);
+    if (!entries.length) return;
+    const css = entries.map(([scene, color]) => `--scene-${scene}: ${color};`).join(' ');
+    let $style = document.getElementById('scene-color-vars');
+    if (!$style) {
+      $style = document.createElement('style');
+      $style.id = 'scene-color-vars';
+      document.head.appendChild($style);
+    }
+    $style.textContent = `:root { ${css} }`;
+  }
+
   /* ========== 初始化 ========== */
   async function init() {
     const params = new URLSearchParams(window.location.search);
@@ -27,6 +43,8 @@
       if (summaryRes.ok) {
         const summaryData = await summaryRes.json();
         window.__sceneLabels = summaryData.sceneLabels || {};
+        /* 将场景颜色注入为 CSS 变量，与列表页一致，新增场景无需改 CSS */
+        injectSceneColors(window.__sceneLabels);
       }
     } catch (e) {
       /* summary 加载失败不影响主流程，scene 回退为原始值 */
@@ -68,8 +86,11 @@
       ? renderDetailPreviewImages(theme)
       : renderDetailPreviewFallback(theme, primary, secondary, accent);
 
-    /* scene 徽章：从全局 sceneLabels 映射，未匹配时回退为原始值 */
-    const sceneBadge = `<span class="detail-scene scene-${theme.scene}">${escapeHTML(window.__sceneLabels?.[theme.scene] || theme.scene)}</span>`;
+    /* scene 徽章：从全局 sceneLabels 映射（值为 {label, color} 对象），未匹配时回退为原始值；
+       内联 --scene-color 供 CSS 通用规则着色 */
+    const sceneCfg = window.__sceneLabels?.[theme.scene];
+    const sceneStyleAttr = sceneCfg?.color ? ` style="--scene-color:${sceneCfg.color}"` : '';
+    const sceneBadge = `<span class="detail-scene scene-${theme.scene}"${sceneStyleAttr}>${escapeHTML(sceneCfg?.label || theme.scene)}</span>`;
 
     /* tags */
     const tags = theme.tags.map(t => `<span class="detail-tag">${escapeHTML(t)}</span>`).join('');

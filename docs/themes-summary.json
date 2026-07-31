@@ -1,10 +1,22 @@
 {
-  "generatedAt": "2026-07-31T13:05:01.488Z",
+  "generatedAt": "2026-07-31T13:30:34.161Z",
   "sceneLabels": {
-    "b2c": "C端",
-    "b2b": "B端",
-    "game": "游戏",
-    "presentation": "演示"
+    "b2c": {
+      "label": "C端",
+      "color": "#fa8c16"
+    },
+    "b2b": {
+      "label": "B端",
+      "color": "#1677ff"
+    },
+    "game": {
+      "label": "游戏",
+      "color": "#722ed1"
+    },
+    "presentation": {
+      "label": "演示",
+      "color": "#389e0d"
+    }
   },
   "themes": [
     {
