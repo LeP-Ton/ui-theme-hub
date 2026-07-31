@@ -1,7 +1,7 @@
 {
-  "name": "AI 演示稿",
+  "name": "Poem PPT",
   "version": "1.0.0",
-  "description": "AI 主题分享演示稿风格，暖橙 + 天蓝双色搭配、毛玻璃面板与浮动光斑，适合技术分享、团队内训与轻量演讲",
+  "description": "PPT演示主题，暖橙 + 天蓝双色搭配、毛玻璃面板与浮动光斑，适合技术分享、团队内训与轻量演讲",
   "author": "设计团队P",
   "scene": "presentation",
   "tags": ["presentation", "slide", "sharing", "tech-talk", "warm", "glassmorphism"],

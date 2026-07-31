@@ -87,6 +87,7 @@ theme.config.json          # 全局配置（sceneLabels 等集中维护点）
 
 ## 场景映射体系
 - **theme.config.json**（项目根目录）：全局配置，sceneLabels 为 scene key → 中文显示名的唯一维护点
+- 当前场景体系（key 用国际通用术语，中文简洁对仗）：`b2c`(C端) / `b2b`(B端) / `game`(游戏) / `presentation`(演示)。b2c/b2b 按商业模型兜底通用产品，game/presentation 为特殊形态单列
 - 构建脚本读取 theme.config.json，输出 sceneLabels 到 `themes-summary.json`
 - 前端（app.js / detail.js）从数据读取，不再硬编码映射
 - 新增场景只需在 `theme.config.json` 的 `sceneLabels` 加一行，前端自动生效
@@ -101,19 +102,19 @@ CSS 由 .tsx 中的 import 驱动，esbuild css loader 自动提取到 out.css �
 ## 当前主题
 | 目录名 (dir) | 显示名 (name) | 场景 | 主色 | Patterns |
 |--------------|---------------|------|------|----------|
-| ai-ppt-theme | AI 演示稿 | 演讲 | #ff6a3d (橙) | slide-deck, dual-column-card |
+| ai-ppt-theme | Poem PPT | 演示 | #ff6a3d (橙) | slide-deck, dual-column-card |
 | apple-theme | Apple 风格 | C端 | #fa8c16 (橙) | landing-page, feature-grid |
-| boss-theme-blue | 企业蓝 | 企业级 | #1677ff (蓝) | dashboard, stats-cards |
-| boss-theme-orange | 企业橙 | 企业级 | #ff6600 (橙) | list-page, form-section |
+| boss-theme-blue | Boss蓝 | B端 | #1677ff (蓝) | dashboard, stats-cards |
+| boss-theme-orange | Boss橙 | B端 | #ff6600 (橙) | list-page, form-section |
 | cyberpunk-theme | 赛博朋克 | 游戏 | #177ddc (蓝紫) | game-hud, character-panel |
 
 ## URL 参数规范
 外部系统（如 ui-design-skill）可通过 query string 控制页面状态：
-- `?scene=enterprise` — 按场景筛选
+- `?scene=b2b` — 按场景筛选
 - `?tags=blue,management` — 按标签筛选（逗号分隔）
 - `?q=管理` — 搜索关键词回填
 - `?installed=apple-theme,boss-theme-blue` — 已下载主题标记并排前（按 dir 匹配）
-- 组合示例：`?scene=enterprise&installed=boss-theme-blue`
+- 组合示例：`?scene=b2b&installed=boss-theme-blue`
 
 ## 下载机制
 页面「下载」按钮 → 下载主题 zip 包（仅含主题目录） → 用户自行解压放置到目标目录

@@ -1,13 +1,13 @@
 {
   "dir": "boss-theme-blue",
-  "name": "企业蓝",
+  "name": "Boss蓝",
   "version": "1.0.0",
   "description": "Boss平台B端管理系统蓝色效能主题，专业科技感，适合企业级应用",
   "author": "设计团队B",
-  "scene": "enterprise",
+  "scene": "b2b",
   "tags": [
     "management",
-    "enterprise",
+    "b2b",
     "boss platform",
     "blue"
   ],
@@ -167,5 +167,5 @@
       "source": "# B端管理系统专属规范\n\n## 布局\n\n### 标准三栏布局\n\n```\n┌──────────────────────────────────────────┐\n│ Header（固定顶部，56px）                  │\n├──────┬───────────────────────────────────┤\n│      │ 面包屑                             │\n│ Side ├───────────────────────────────────┤\n│ bar  │ 页面标题               操作按钮   │\n│ 240px├───────────────────────────────────┤\n│ 折叠 │ 内容区域（padding: 24px）          │\n│ 80px │                                   │\n└──────┴───────────────────────────────────┘\n```\n\n- 侧边栏：默认 240px，可折叠至 80px\n- 内容区最小高度：calc(100vh - 56px)\n\n### 推荐技术栈：antd 5.x\n\n## 表格规范\n\n- 表头背景：`color.background.muted`\n- 行高：54px\n- 关键列固定左侧，操作列固定右侧\n- 超过 3 个操作使用下拉菜单\n- 分页：默认每页 10 条，显示总数和页码跳转\n\n## 表单规范\n\n- 水平表单（搜索）：`layout=\"inline\"`，antd Form\n- 栅格表单（新增/编辑）：两列 `Row + Col`，labelCol 6 / wrapperCol 18\n- 超过 3 行条件使用\"展开/收起\"\n\n## 反馈规范\n\n- 成功/失败：`message.success()` / `message.error()`\n- 重要通知：`notification`\n- 确认操作：`Modal.confirm()`\n- 危险操作必须二次确认\n\n## 页面类型\n\n| 页面 | 特征 | 详见 |\n|------|------|------|\n| 列表页 | 搜索+表格+分页 | `templates/scenes/b-end/pages/list-page.md` |\n| 详情页 | 信息展示+操作 | `templates/scenes/b-end/pages/detail-page.md` |\n| 表单页 | 新增/编辑 | `templates/scenes/b-end/pages/form-page.md` |\n| 仪表盘 | 统计+图表 | `templates/scenes/b-end/pages/dashboard.md` |\n"
     }
   ],
-  "contextTokens": 3452
+  "contextTokens": 3456
 }

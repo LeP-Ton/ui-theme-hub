@@ -1,9 +1,9 @@
 {
   "sceneLabels": {
-    "c-end": "C端",
-    "enterprise": "企业级",
+    "b2c": "C端",
+    "b2b": "B端",
     "game": "游戏",
-    "presentation": "演讲"
+    "presentation": "演示"
   },
   "sizeLimits": {
     "_doc": "大小评估阈值（防止主题无限膨胀）。source 组按 token 量化（进 AI 上下文），output 组按字节量化（编译产物）。超限会在构建末尾汇总并 fail build（退出码 1）。详见 README「大小限制配置」章节。调整阈值只改本文件，无需改代码。",

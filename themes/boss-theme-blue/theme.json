@@ -1,10 +1,10 @@
 {
-  "name": "企业蓝",
+  "name": "Boss蓝",
   "version": "1.0.0",
   "description": "Boss平台B端管理系统蓝色效能主题，专业科技感，适合企业级应用",
   "author": "设计团队B",
-  "scene": "enterprise",
-  "tags": ["management", "enterprise", "boss platform", "blue"],
+  "scene": "b2b",
+  "tags": ["management", "b2b", "boss platform", "blue"],
   "requires": [
     { "name": "antd", "source": "https://github.com/ant-design/ant-design" }
   ],

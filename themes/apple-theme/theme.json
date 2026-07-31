@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "Apple 风格主题，简洁优雅，适合C端产品、营销落地页和移动端",
   "author": "设计团队C",
-  "scene": "c-end",
-  "tags": ["c-end", "marketing", "mobile", "apple", "elegant"],
+  "scene": "b2c",
+  "tags": ["b2c", "marketing", "mobile", "apple", "elegant"],
   "requires": [
     { "name": "tailwind", "source": "https://github.com/tailwindlabs/tailwindcss" }
   ],

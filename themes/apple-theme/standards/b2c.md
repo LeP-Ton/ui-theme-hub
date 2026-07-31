@@ -48,6 +48,6 @@ React + CSS/Tailwind（灵活定制，视觉表现力强）
 
 | 页面 | 特征 | 详见 |
 |------|------|------|
-| 首页 | Hero+特性+内容+CTA | `templates/scenes/c-end/pages/home-page.md` |
-| 产品详情 | 图片+信息+操作 | `templates/scenes/c-end/pages/product-page.md` |
-| 个人中心 | 信息+设置+操作 | `templates/scenes/c-end/pages/profile-page.md` |
+| 首页 | Hero+特性+内容+CTA | `templates/scenes/b2c/pages/home-page.md` |
+| 产品详情 | 图片+信息+操作 | `templates/scenes/b2c/pages/product-page.md` |
+| 个人中心 | 信息+设置+操作 | `templates/scenes/b2c/pages/profile-page.md` |

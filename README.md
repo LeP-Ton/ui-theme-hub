@@ -10,9 +10,10 @@ UI 主题资产管理中心，为 [ui-design-skill](https://github.com/LeP-Ton/u
 
 | 目录名 (dir) | 显示名 | 场景 | 主色 | 页面模板 | 组件模板 |
 |--------------|--------|------|------|----------|----------|
+| `ai-ppt-theme` | Poem PPT | 演示 | #ff6a3d 🟠 | slide-deck | dual-column-card |
 | `apple-theme` | Apple 风格 | C端 | #fa8c16 🟠 | landing-page | feature-grid |
-| `boss-theme-blue` | 企业蓝 | 企业级 | #1677ff 🔵 | dashboard | stats-cards |
-| `boss-theme-orange` | 企业橙 | 企业级 | #ff6600 🟠 | list-page | form-section |
+| `boss-theme-blue` | Boss蓝 | B端 | #1677ff 🔵 | dashboard | stats-cards |
+| `boss-theme-orange` | Boss橙 | B端 | #ff6600 🟠 | list-page | form-section |
 | `cyberpunk-theme` | 赛博朋克 | 游戏 | #177ddc 🟣 | game-hud | character-panel |
 
 ---
@@ -122,12 +123,12 @@ tokens
 
 ```json
 {
-  "name": "企业蓝",
+  "name": "Boss蓝",
   "version": "1.0.0",
-  "description": "企业级管理系统蓝色效能主题，专业科技感",
+  "description": "Boss平台B端管理系统蓝色效能主题，专业科技感",
   "author": "设计团队B",
-  "scene": "enterprise",
-  "tags": ["management", "enterprise", "boss platform", "blue"],
+  "scene": "b2b",
+  "tags": ["management", "b2b", "boss platform", "blue"],
   "requires": [
     { "name": "antd", "source": "https://github.com/ant-design/ant-design" }
   ],
@@ -171,10 +172,10 @@ tokens
 ```json
 {
   "sceneLabels": {
-    "c-end": "C端",
-    "enterprise": "企业级",
+    "b2c": "C端",
+    "b2b": "B端",
     "game": "游戏",
-    "presentation": "演讲"
+    "presentation": "演示"
   }
 }
 ```
@@ -322,7 +323,7 @@ node scripts/build-index.js
 
 | 参数 | 格式 | 说明 | 示例 |
 |------|------|------|------|
-| `scene` | 单值 | 按场景筛选 | `?scene=enterprise` |
+| `scene` | 单值 | 按场景筛选 | `?scene=b2b` |
 | `tags` | 逗号分隔 | 按标签筛选（AND 逻辑） | `?tags=blue,management` |
 | `q` | 自由文本 | 搜索（匹配 name/description/author/scene/tags） | `?q=管理` |
 | `installed` | 逗号分隔 | 标记已下载主题（按 dir 匹配，排在前面） | `?installed=apple-theme,boss-theme-blue` |
@@ -330,7 +331,7 @@ node scripts/build-index.js
 组合示例：
 
 ```
-?scene=enterprise&tags=blue&q=管理&installed=boss-theme-blue
+?scene=b2b&tags=blue&q=管理&installed=boss-theme-blue
 ```
 
 详情页通过 `theme` 参数指定主题：

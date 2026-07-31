@@ -1,17 +1,108 @@
 {
-  "generatedAt": "2026-07-31T07:37:21.082Z",
+  "generatedAt": "2026-07-31T13:05:01.488Z",
   "sceneLabels": {
-    "c-end": "C端",
-    "enterprise": "企业级",
+    "b2c": "C端",
+    "b2b": "B端",
     "game": "游戏",
-    "presentation": "演讲"
+    "presentation": "演示"
   },
   "themes": [
     {
-      "dir": "ai-ppt-theme",
-      "name": "AI 演示稿",
+      "dir": "apple-theme",
+      "name": "Apple 风格",
       "version": "1.0.0",
-      "description": "AI 主题分享演示稿风格，暖橙 + 天蓝双色搭配、毛玻璃面板与浮动光斑，适合技术分享、团队内训与轻量演讲",
+      "description": "Apple 风格主题，简洁优雅，适合C端产品、营销落地页和移动端",
+      "author": "设计团队C",
+      "scene": "b2c",
+      "tags": [
+        "b2c",
+        "marketing",
+        "mobile",
+        "apple",
+        "elegant"
+      ],
+      "requires": [
+        {
+          "name": "tailwind",
+          "source": "https://github.com/tailwindlabs/tailwindcss"
+        }
+      ],
+      "previews": [],
+      "primaryColor": "#fa8c16",
+      "secondaryColor": "#faad14",
+      "accentColor": "#eb2f96",
+      "patternPages": [
+        "landing-page"
+      ],
+      "patternComponents": [
+        "feature-grid"
+      ]
+    },
+    {
+      "dir": "boss-theme-orange",
+      "name": "Boss橙",
+      "version": "1.0.0",
+      "description": "Boss平台B端管理系统橙色业务主题，专业科技感，适合企业级应用",
+      "author": "设计团队B",
+      "scene": "b2b",
+      "tags": [
+        "management",
+        "b2b",
+        "boss platform",
+        "orange"
+      ],
+      "requires": [
+        {
+          "name": "antd",
+          "source": "https://github.com/ant-design/ant-design"
+        }
+      ],
+      "previews": [],
+      "primaryColor": "#ff6600",
+      "secondaryColor": "#ff8c3a",
+      "accentColor": "#ff4d00",
+      "patternPages": [
+        "list-page"
+      ],
+      "patternComponents": [
+        "form-section"
+      ]
+    },
+    {
+      "dir": "boss-theme-blue",
+      "name": "Boss蓝",
+      "version": "1.0.0",
+      "description": "Boss平台B端管理系统蓝色效能主题，专业科技感，适合企业级应用",
+      "author": "设计团队B",
+      "scene": "b2b",
+      "tags": [
+        "management",
+        "b2b",
+        "boss platform",
+        "blue"
+      ],
+      "requires": [
+        {
+          "name": "antd",
+          "source": "https://github.com/ant-design/ant-design"
+        }
+      ],
+      "previews": [],
+      "primaryColor": "#1677ff",
+      "secondaryColor": "#597ef7",
+      "accentColor": "#13c2c2",
+      "patternPages": [
+        "dashboard"
+      ],
+      "patternComponents": [
+        "stats-cards"
+      ]
+    },
+    {
+      "dir": "ai-ppt-theme",
+      "name": "Poem PPT",
+      "version": "1.0.0",
+      "description": "PPT演示主题，暖橙 + 天蓝双色搭配、毛玻璃面板与浮动光斑，适合技术分享、团队内训与轻量演讲",
       "author": "设计团队P",
       "scene": "presentation",
       "tags": [
@@ -37,97 +128,6 @@
       ],
       "patternComponents": [
         "dual-column-card"
-      ]
-    },
-    {
-      "dir": "apple-theme",
-      "name": "Apple 风格",
-      "version": "1.0.0",
-      "description": "Apple 风格主题，简洁优雅，适合C端产品、营销落地页和移动端",
-      "author": "设计团队C",
-      "scene": "c-end",
-      "tags": [
-        "c-end",
-        "marketing",
-        "mobile",
-        "apple",
-        "elegant"
-      ],
-      "requires": [
-        {
-          "name": "tailwind",
-          "source": "https://github.com/tailwindlabs/tailwindcss"
-        }
-      ],
-      "previews": [],
-      "primaryColor": "#fa8c16",
-      "secondaryColor": "#faad14",
-      "accentColor": "#eb2f96",
-      "patternPages": [
-        "landing-page"
-      ],
-      "patternComponents": [
-        "feature-grid"
-      ]
-    },
-    {
-      "dir": "boss-theme-orange",
-      "name": "企业橙",
-      "version": "1.0.0",
-      "description": "Boss平台B端管理系统橙色业务主题，专业科技感，适合企业级应用",
-      "author": "设计团队B",
-      "scene": "enterprise",
-      "tags": [
-        "management",
-        "enterprise",
-        "boss platform",
-        "orange"
-      ],
-      "requires": [
-        {
-          "name": "antd",
-          "source": "https://github.com/ant-design/ant-design"
-        }
-      ],
-      "previews": [],
-      "primaryColor": "#ff6600",
-      "secondaryColor": "#ff8c3a",
-      "accentColor": "#ff4d00",
-      "patternPages": [
-        "list-page"
-      ],
-      "patternComponents": [
-        "form-section"
-      ]
-    },
-    {
-      "dir": "boss-theme-blue",
-      "name": "企业蓝",
-      "version": "1.0.0",
-      "description": "Boss平台B端管理系统蓝色效能主题，专业科技感，适合企业级应用",
-      "author": "设计团队B",
-      "scene": "enterprise",
-      "tags": [
-        "management",
-        "enterprise",
-        "boss platform",
-        "blue"
-      ],
-      "requires": [
-        {
-          "name": "antd",
-          "source": "https://github.com/ant-design/ant-design"
-        }
-      ],
-      "previews": [],
-      "primaryColor": "#1677ff",
-      "secondaryColor": "#597ef7",
-      "accentColor": "#13c2c2",
-      "patternPages": [
-        "dashboard"
-      ],
-      "patternComponents": [
-        "stats-cards"
       ]
     },
     {
